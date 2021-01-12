@@ -1,0 +1,18 @@
+const { DiscordEvent } = require("eris-boiler/lib");
+const ReactionHandler = require("eris-reactions");
+const axios = require("axios");
+const { token } = require("morgan");
+const { link } = require("fs");
+module.exports = new DiscordEvent({
+	name: "messageCreate",
+	run: async (bot, msg) => {
+		if (msg.content.startsWith(".")) return;
+		if (msg.content.match(/<((:|a:)\w+:\d+)|(@(!|&)?\d+)>/g)) return;
+		msg.content = msg.content.replace(/(d|D)azai/g,"you");
+		if (msg.content.length > 1023) msg.content.length = 1023;
+		if (msg.author.bot || msg.command) return;
+		// console.log("processing...");
+		bot.ConvoHandler.processConvo(msg);
+	}
+});
+
