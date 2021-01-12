@@ -4,7 +4,7 @@ const axios = require("axios");
 module.exports = new DiscordEvent({
 	name: "messageCreate",
 	run: async (bot, msg) => {
-		
+		return;
 		if (!msg.author.bot){
 			let channelData = await bot.SQLHandler.getChannel(msg.channel.id);
 			// if (channe)
