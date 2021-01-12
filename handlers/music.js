@@ -61,9 +61,9 @@ class MusicHandler {
 
 	}
 	async init() {
-		cp = await fork("./handlers/nowPlaying.js");
-		cp.on("message", this.processMessage);
-		cp.stderr.on("data", x => console.log(x));
+		// cp = await fork("./handlers/nowPlaying.js");
+		// cp.on("message", this.processMessage);
+		// cp.stderr.on("data", x => console.log(x));
 		this.ready = true;
 	}
 	async queueSong(guildID, songLink, messageChannelBound, connection, silentAdd, mem) {
