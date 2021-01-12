@@ -12,16 +12,14 @@ function text_truncate(str,len){
 }
 
 module.exports = new GuildCommand({
-	name: "forceskip", // name of command
-	description: "Forces a skip of the current song",
+	name: "whosplaying", // name of command
+	description: "Admin Command.",
 	run: (async (client, { msg, params }) => {
-		if (!await client.permissionsHandler.checkForPerm(msg.member,"skipSong")) return "You are lacking the permission node `skipSong`";
-		client.MusicHandler.skipSong(msg.guildID);
-		return "Skipping by force...";
+		return "Admin command: There are "+client.voiceConnections.size;
 
 	}),
 	options:{
-		aliases: ["fs"]
+		// aliases: 
 	} // functionality of command
 	// list of things in object passed to run: bot (DataClient), msg (Message), params (String[])
 });

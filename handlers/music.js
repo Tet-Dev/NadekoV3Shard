@@ -1,5 +1,6 @@
 
 const ytdl = require("ytdl-core");
+const axios = require("axios");
 const { spawn, fork } = require("child_process");
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 function SecsToFormat(string) {
@@ -37,15 +38,16 @@ class MusicHandler {
 		this.handler = new Map();
 		this.songCache = new Map();
 		this.YoutubeCookies = process.env.YoutubeCookies;
-		// this.YoutubeCookies2 = process.env.YoutubeCookies2;
-		this.YoutubeCookies2 = this.YoutubeCookies;
+		this.YoutubeCookies2 = process.env.YoutubeCookies2;
+		console.log(this.YoutubeCookies);
+		// this.YoutubeCookies2 = this.YoutubeCookies;
 		this.ready = false;
 		// this.npMaps = new Map();
 		this.init();
 	}
 	async processMessage(msg) {
-		console.log(msg)
-		npMaps.get(msg.key)(msg.path)
+		console.log(msg);
+		npMaps.get(msg.key)(msg.path);
 		npMaps.delete(msg.key);
 	}
 	async sendMessage(data) {
@@ -59,12 +61,12 @@ class MusicHandler {
 
 	}
 	async init() {
-		// cp = await fork("./handlers/nowPlaying.js");
-		// cp.on("message", this.processMessage);
-		// cp.stderr.on("data", x => console.log(x));
-		// this.ready = true
+		cp = await fork("./handlers/nowPlaying.js");
+		cp.on("message", this.processMessage);
+		cp.stderr.on("data", x => console.log(x));
+		this.ready = true;
 	}
-	async queueSong(guildID, songLink, messageChannelBound, connection, silentAdd) {
+	async queueSong(guildID, songLink, messageChannelBound, connection, silentAdd, mem) {
 		let msg = guildID;
 		guildID = guildID.guildID;
 		try {
@@ -79,12 +81,12 @@ class MusicHandler {
 				loop: false,
 			});
 			let data = this.handler.get(guildID);
-			let basicInfo = await this.checkCacheFor(songLink);
+			let basicInfo = await this.checkCacheFor(songLink).catch(er => { });
 			if (!basicInfo) {
 				return false;
 			}
 			this.songCache.set(songLink, basicInfo);
-			let title = basicInfo.player_response.videoDetails.title;
+			let title = basicInfo.videoDetails.title;
 			// connection = this.bot.voiceConnections.filter(x=>x.id+"" === guildID)[0];
 			// if (!connection){
 			// 	return;
@@ -104,7 +106,7 @@ class MusicHandler {
 				highWaterMark: 1024 * 1024,
 				requestOptions: {
 					headers: {
-						cookie: Math.random() > 0.5 ? this.YoutubeCookies : this.YoutubeCookies2,
+						cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
 					},
 				},
 			});
@@ -119,34 +121,68 @@ class MusicHandler {
 			// await sleep(750);
 			// connection.stopPlaying();
 			this.bot.voiceConnections.filter(x => x.id + "" === guildID)[0].play(stream);
-			data.channel.createMessage("Now Playing `" + title + "` !");
+			if (!mem) {
+				(connection ? connection : data.connection).on("error", (x) => console.trace(x));
+				(connection ? connection : data.connection).on("disconnect", async () => {
+					await this.removeQueue(guildID, "all").catch(er => { });
+				});
+			}
+			if (!mem) mem = msg.member;
+			let dat2 = axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
+				auth: this.bot.token,
+				queue: data.queue.map(x => x.song),
+				song: songLink,
+				guild: msg.guildID,
+				channel: msg.channel.id,
+				whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
+			}).catch(er => { });
+			console.log({
+				auth: this.bot.token,
+				queue: data.queue.map(x => x.song).filter((x, index) => index < 3),
+				song: songLink,
+				guild: msg.guildID,
+				channel: msg.channel.id,
+				whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
+			});
+			// data.channel.createMessage("Now Playing `" + title + "` !");
 			data.currentsong = {
 				userAdded: msg.member,
 				song: songLink,
 			};
 			data.currentSongStartTime = Math.floor((new Date()).getTime() / 1000);
 			this.handler.set(guildID, data);
-			connection.once("error", (x) => console.trace(x));
+			// connection.once("error", (x) => console.trace(x));
+			// connection.once("disconnect",async ()=>{
+			// 	await this.removeQueue(guildID,"all");
+			// })
 			(connection ? connection : data.connection).once("end", async () => {
-				data = this.handler.get(guildID);
-				data.skips = [];
-				//  = "";
-				if (data.loop) data.queue.push(data.currentsong);
-				data.currentsong = null;
-				if (data.queue.length > 0) {
-					await this.queueSong(msg, data.queue.shift(), messageChannelBound, connection);
-					this.handler.set(guildID, data);
-				} else {
-					data.channel.createMessage("Queue Finished!");
-					this.handler.delete(guildID);
+				console.log("song ended",connection.ready);
+				if (!connection.ready) return data.channel.createMessage("Bot got kicked out!"); 
+				try {
+					data = this.handler.get(guildID);
+					data.skips = [];
+					//  = "";
+					if (data.loop) data.queue.push(data.currentsong);
+					data.currentsong = null;
+					if (data.queue.length > 0) {
+						let dq = data.queue.shift();
+						await this.queueSong(msg, dq.song, messageChannelBound, connection, false, dq.userAdded).catch(er => { });
+						this.handler.set(guildID, data);
+					} else {
+						data.channel.createMessage("Queue Finished!");
+						this.handler.delete(guildID);
+					}
+				} catch (error) {
+					console.trace(error,"Error");
 				}
+
 			});
 		} catch (er) { console.trace(er); }
 
 	}
 	async queueArray(guildID, songArr, connection, messageChannelBound, silentAdd) {
 
-		await this.queueSong(guildID, songArr.shift(), messageChannelBound, connection, silentAdd);
+		await this.queueSong(guildID, songArr.shift(), messageChannelBound, connection, silentAdd).catch(er => { });
 		let data = this.handler.get(guildID.guildID);
 		data.queue = data.queue.concat(songArr.map(x => {
 			return {
@@ -154,8 +190,8 @@ class MusicHandler {
 				userAdded: guildID.member,
 			};
 		}));
-		for (let i = 0; i < songArr.length;i++){
-			this.checkCacheFor(songArr[i]);
+		for (let i = 0; i < songArr.length; i++) {
+			await this.checkCacheFor(songArr[i]).catch(er => { });
 		}
 		// songArr.forEach(x => {
 		// 	this.checkCacheFor(x);
@@ -168,7 +204,8 @@ class MusicHandler {
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
 		// console.log(data.currentsong)
-		return [data.currentsong.song, data.currentSongStartTime,data.currentsong.userAdded.username];
+		// return [data.currentsong.song, data.currentSongStartTime,data.currentsong.userAdded.username];
+		return [data.currentsong.song, data.currentSongStartTime];
 	}
 	toggleLoop(guildID) {
 		let data = this.handler.get(guildID);
@@ -211,11 +248,15 @@ class MusicHandler {
 	async getQueue(guildID) {
 		let data = this.handler.get(guildID);
 		if (!data) return [];
-		let queue = await Promise.all(data.queue.map(async (x) => await this.checkCacheFor(x)));
+		let queue = [];
+		for (let i = 0; i < data.queue.length; i++) {
+			queue.push(await this.checkCacheFor(data.queue[i].song).catch(er => { }));
+		}
+		// let queue = await Promise.all(data.queue.map(async (x) => await this.checkCacheFor(x)));
 		return queue.map((x, ind) => {
 			return {
-				"name": (x.videoDetails?x.videoDetails.title:"UNKNOWN") || "UNKNOWN",
-				"value": "#" + (ind + 1) + " | Length: " + SecsToFormat((x.player_response.videoDetails.lengthSeconds || 0) + "") + " | [Link](" + data.queue[ind].song + ") | Requested by" + (data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)+"#"+data.queue[ind].userAdded.user.discriminator
+				"name": x.videoDetails.title || "UNKNOWN",
+				"value": "#" + (ind + 1) + " | Length: " + SecsToFormat((x.videoDetails.lengthSeconds || 0) + "") + " | [Link](" + data.queue[ind].song + ") | Requested by" + (data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username) + "#" + data.queue[ind].userAdded.user.discriminator
 			};
 
 		}).filter(x => x);
@@ -223,27 +264,29 @@ class MusicHandler {
 	}
 	async removeQueue(guildID, ind) {
 		let data = this.handler.get(guildID);
+		let pop;
 		if (ind.toLowerCase() === "all") {
 			data.queue = [];
 
 		} else {
-			return await this.checkCacheFor(data.queue.splice(ind + 1, 1)[0]);
+			pop = await this.checkCacheFor(data.queue.splice(ind - 1, 1)[0].song).catch(er => { });
+
 		}
 
 		this.handler.set(guildID, data);
-
+		return pop;
 	}
 	async checkCacheFor(item) {
 		let basicInfo = this.songCache.get(item);
 		let attempts = 0;
-		while ((!basicInfo || !basicInfo.player_response) && attempts < 10) {
+		while ((!basicInfo || !basicInfo.videoDetails) && attempts < 10) {
 			attempts++;
 			await sleep(500);
 			basicInfo = await ytdl.getInfo(item,
 				{
 					requestOptions: {
 						headers: {
-							cookie: Math.random() > 0.5 ? this.YoutubeCookies : this.YoutubeCookies2,
+							cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
 						},
 					},
 				}

@@ -13,8 +13,9 @@ function text_truncate(str,len){
 
 module.exports = new GuildCommand({
 	name: "voteskip", // name of command
-	description: "Votes to skip the current song SLASH COMMAND WILL NOT WORK WITH THIS!",
+	description: "Votes to skip the current song",
 	run: (async (client, { msg, params }) => {
+		return await client.MusicHandler.addUserSkip(msg.guildID,msg.author.id);
 	}),
 	options:{
 		aliases: ["vs","skip"]

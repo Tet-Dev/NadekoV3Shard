@@ -13,18 +13,18 @@ function text_truncate(str, len) {
 
 module.exports = new GuildCommand({
 	name: "loop", // name of command
-	description: "Toggles loop on or off. SLASH COMMAND WILL NOT WORK WITH THIS!",
+	description: "Toggles loop on or off",
 	run: (async (client, { msg, params }) => {
-		// if (!(await client.permissionsHandler.checkForPerm(msg.member, "loop"))) {
-		// 	return "You lack the permission `loop`";
-		// }
-		// let channelID = msg.member.voiceState.channelID;
-		// if (channelID) {
-		// 	let a = client.MusicHandler.toggleLoop(msg.guildID);
-		// 	return `Looping Playlist is now \`${a? "ON":"OFF"}\``;
-		// } else {
-		// 	return "You are not in a vc!";
-		// }
+		if (!(await client.permissionsHandler.checkForPerm(msg.member, "loop"))) {
+			return "You lack the permission `loop`";
+		}
+		let channelID = msg.member.voiceState.channelID;
+		if (channelID) {
+			let a = client.MusicHandler.toggleLoop(msg.guildID);
+			return `Looping Playlist is now \`${a? "ON":"OFF"}\``;
+		} else {
+			return "You are not in a vc!";
+		}
 		// client.createMessage(msg.channel.id, "Pong!");
 		
 
