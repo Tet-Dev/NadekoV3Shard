@@ -100,26 +100,6 @@ class ExpressServer {
 				}
 			}
 		});
-		let recall = (async () => {
-			const tunnel = await localtunnel({ port: 8080, subdomain: "k49zsatbw" });
-
-			// the assigned public url for your tunnel
-			// i.e. https://abcdefgjhij.localtunnel.me
-			console.log("URL :tunnel.url" + tunnel.url + "\n\n\n")
-			await axios.post("https://api.dazai.app/updatePostURL", {
-				url: `${tunnel.url}`,
-				auth: process.env.APIAUTH || "5ziej8ixgtmyvbd7nm6bpcab7seaf2zkpue9au25",
-			});
-
-			tunnel.on("close", () => {
-				recall();
-				// tunnels are closed
-			});
-			setInterval(() => {
-				watchAPI(tunnel.url);
-			}, 10000);
-		});
-		recall();
 		app.post("/api/getGuildStats", async function (req, res) {
 			const authToken = req.body.code;
 			const guildID = req.body.guildID;

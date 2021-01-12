@@ -9,7 +9,7 @@ var SpotifyWebApi = require("spotify-web-api-node");
 const PermissionsHandler = require("./handlers/permissionHandler");
 const EconomyHandler = require("./handlers/economy");
 const LevellingHandler = require("./handlers/levelling");
-const DiscordBotList = require("dblapi.js");
+// const DiscordBotList = require("dblapi.js");
 const PunishmentHandler = require("./handlers/punishment");
 const ShopHandler = require("./handlers/shopHandler");
 const { map } = require("lodash");
@@ -222,9 +222,9 @@ const server = express();
 server.all('/', (req, res)=>{
     res.send('Dazai ping!')
 })
-server.listen(3000);
+server.listen(8000);
 console.log("Server is Ready!")
-module.exports = ()=>{ server.listen(3000, ()=>{console.log("Server is Ready!")});
+module.exports = ()=>{ server.listen(8000, ()=>{console.log("Server is Ready!")});
 };
 // const nodeUtil = require('util');
 // if (!process.env.APIAUTH){
