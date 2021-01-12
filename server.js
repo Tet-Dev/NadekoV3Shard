@@ -403,7 +403,7 @@ bot.on("ready", async () => {
 	});
 	Axios.post("https://api.dazai.app/api/reportShard",{
 		token : bot.token,
-		guildCount: bot.guilds.size(),
+		guildCount: bot.guilds.size,
 		commands: commands,
 		perms: bot.permissionsHandler.getallPerms(),
 		shard: process.env.PROCESSID,
