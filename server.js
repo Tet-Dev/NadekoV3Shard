@@ -71,7 +71,7 @@ const options = {
 		sendIDOnly: true,
 		firstShardID: Number(process.env.PROCESSID),
 		lastShardID: Number(process.env.PROCESSID),
-		maxShards: 10,
+		maxShards: 2,
 	},
 };
 
