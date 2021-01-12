@@ -58,19 +58,19 @@ const options = {
 	oratorOptions: {
 		defaultPrefix: "daz" // sets the default prefix to !!
 	},
-	// statusManagerOptions: {
-	// 	defaultStatus: { // sets default discord activity
-	// 		type: 0,
-	// 		name: "daz help | Bot rewrite!"
-	// 	},
-	// 	mode: "random" // sets activity mode to random, the bot will change status on an interval
-	// },
+	statusManagerOptions: {
+		defaultStatus: { // sets default discord activity
+			type: 0,
+			name: "daz help | ..."
+		},
+		mode: "random" // sets activity mode to random, the bot will change status on an interval
+	},
 	erisOptions: {
 		restMode: true,
 		defaultImageSize: 256,
 		sendIDOnly: true,
-		firstShardID: process.env.PROCESSID,
-		lastShardID: process.env.PROCESSID,
+		firstShardID: Number(process.env.PROCESSID),
+		lastShardID: Number(process.env.PROCESSID),
 		maxShards: 10,
 	},
 };
