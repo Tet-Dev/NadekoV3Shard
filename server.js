@@ -61,7 +61,7 @@ const options = {
 	statusManagerOptions: {
 		defaultStatus: { // sets default discord activity
 			type: 0,
-			name: "daz help | ..."
+			name: "daz help | Working on uptime + AI!"
 		},
 		mode: "random" // sets activity mode to random, the bot will change status on an interval
 	},
@@ -74,7 +74,206 @@ const options = {
 		maxShards: 2,
 	},
 };
+const RarityColors = {
+	common: [150, 150, 150],
+	rare: [102, 207, 255],
+	super_rare: [135, 255, 159],
+	uber: [230, 169, 255],
+	legendary: [255, 204, 0],
+	event: [-1, -1, -1],
 
+};
+// addtoArr(commonWeight.weight, "common");
+// addtoArr(rareWeight.weight, "rare");
+// addtoArr(superRareWeight.weight, "super_rare");
+// addtoArr(uberRareWeight.weight, "uber");
+// addtoArr(legendaryWeight.weight, "legendary");
+//Inits arrs
+(() => {
+	shopOffers.push({
+		idName: "persona3anime",
+		img: ("./assets/dazaiJimp/shop/persona3anime.png"),
+		name: "Persona Background",
+		rarity: "Common",
+		color: RarityColors.common,
+		price: 250,
+		fullImg: "https://dazai.app/assets/img/Persona3Anime.png",
+		lore: "A card background from Persona 3...",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "persona3anime", false);
+		})
+	});
+	shopOffers.push({
+		idName: "shirongnl",
+		img: ("./assets/dazaiJimp/shop/shirongnl.png"),
+		name: "Shiro Background",
+		rarity: "Common",
+		color: RarityColors.common,
+		price: 250,
+		lore: "A card background from No Game No Life...\nGive ngnl an S2",
+		fullImg: "https://dazai.app/assets/img/shiro.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "shirongnl", false);
+		})
+	});
+	shopOffers.push({
+		idName: "dazai1mboost",
+		img: ("./assets/dazaiJimp/tet.png"),
+		name: "Dazai Boost (1Mo)",
+		rarity: "Rare",
+		color: RarityColors.rare,
+		price: 1250,
+		lore: "A Dazai Server Boost for any server of your liking! ",
+		fullImg: "https://raw.githubusercontent.com/icedTet/icedTet.github.io/master/otherAssets/unknown.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "shirongnl", false);
+		})
+	});
+	shopOffers.push({
+		idName: "Eve-ning",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Eve-ning",
+		rarity: "Rare",
+		color: RarityColors.rare,
+		price: 750,
+		lore: "Eve album cover in a evening. Haha, get it?",
+		fullImg: "https://dazai.app/assets/img/eve-ning.jpg",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "eve-ning", false);
+		})
+	});
+	shopOffers.push({
+		idName: "animenight1",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Anime Night 1",
+		rarity: "Rare",
+		color: RarityColors.rare,
+		price: 850,
+		lore: "Background from Bungo Stray Dogs.",
+		fullImg: "https://dazai.app/assets/img/bg.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "animenight1", false);
+		})
+	});
+	shopOffers.push({
+		idName: "demonslayer1",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Demon Slayer 1",
+		rarity: "Rare",
+		color: RarityColors.rare,
+		price: 1000,
+		lore: "Background from Demon Slayer.",
+		fullImg: "https://dazai.app/assets/img/ds.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "demonslayer1", false);
+		})
+	});
+	shopOffers.push({
+		idName: "luckyDraw",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Lucky Draw",
+		rarity: "Common",
+		color: RarityColors.common,
+		price: 30,
+		lore: "Lucky Draw allows you to refresh your shop and get new offers (Or end up with the same offers if you are unlucky)!",
+		fullImg: "https://raw.githubusercontent.com/icedTet/icedTet.github.io/master/otherAssets/unknown.png",
+		executeFunction: (async (user) => {
+			await refreshUserShop(user.id);
+			return 2;
+		})
+	});
+	shopOffers.push({
+		idName: "superLuckyDraw",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Special Draw",
+		rarity: "Rare",
+		color: RarityColors.rare,
+		price: 50,
+		lore: "Special Draw allows you to refresh your shop and get new, non duplicate offers (Each slot will have 3 chances to get a unique item, if all three chances fail, the slot wont exist)!",
+		fullImg: "https://raw.githubusercontent.com/icedTet/icedTet.github.io/master/otherAssets/unknown.png",
+		executeFunction: (async (user) => {
+			await refreshUserShop(user.id, null, true, [], 0);
+			return 2;
+		})
+	});
+	shopOffers.push({
+		idName: "ani_galaxy",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Red Galaxy",
+		rarity: "Uber",
+		color: RarityColors.uber,
+		price: 5000,
+		lore: "The very first gif background in Dazai!",
+		fullImg: "https://dazai.app/assets/img/ani_galaxy.gif",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "ani_galaxy", false);
+
+		})
+	});
+	shopOffers.push({
+		idName: "dazai",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Dazai",
+		rarity: "Rare",
+		color: RarityColors.rare,
+
+		price: 1250,
+		lore: "A Background card all about me! 😎\nCosts more than your typical card background because I need to pay a beautiful lady to double suicide with me! ",
+		fullImg: "https://dazai.app/assets/img/dazai.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "dazai", false);
+		})
+	});
+	shopOffers.push({
+		idName: "agency",
+		img: ("./assets/dazaiJimp/shop/eve-ning.jpg"),
+		name: "Armed Detective Agency (EVENT ITEM)",
+		rarity: "Super_Rare",
+		color: RarityColors.event,
+		price: 25,
+		lore: "A Background card all with me and my collegues as a thank you for me finally getting verified! Avalible for 25 DC until December 1st! ( detective_agency ). Serialized!",
+		fullImg: "https://dazai.app/assets/img/detectiveAgency.png",
+		executeFunction: (async (user) => {
+			return UserUnlock(user.id, "detective_agency", false, true);
+		}),
+		nodraw: true,
+	});
+	LinkMap.set("nadekomedusa", "./assets/DazaiBgs/nadekomedusa.png");
+	LinkMap.set("renainadeko", "./assets/DazaiBgs/renainadeko.png");
+	LinkMap.set("red", "./assets/DazaiBgs/red.png");
+	LinkMap.set("orange", "./assets/DazaiBgs/orange.png");
+	LinkMap.set("yellow", "./assets/DazaiBgs/yellow.png");
+	LinkMap.set("green", "./assets/DazaiBgs/green.png");
+	LinkMap.set("blue", "./assets/DazaiBgs/blue.png");
+	LinkMap.set("purple", "./assets/DazaiBgs/purple.png");
+	LinkMap.set("spacegray", "./assets/DazaiBgs/spacegray.png");
+	LinkMap.set("silver", "./assets/DazaiBgs/silver.png");
+	LinkMap.set("rainbowfoil", "./assets/DazaiBgs/rainbowfoil.png");
+	LinkMap.set("evenight", "./assets/DazaiBgs/evenight.png");
+	LinkMap.set("eve-ning", "./assets/DazaiBgs/eve-ning.jpg");
+	LinkMap.set("animenight1", "./assets/DazaiBgs/animenight1.png");
+	LinkMap.set("demonslayer1", "./assets/DazaiBgs/demonslayer1.png");
+	LinkMap.set("persona3anime", "./assets/DazaiBgs/persona3anime.png");
+	LinkMap.set("shirongnl", "./assets/DazaiBgs/shirongnl.png");
+	LinkMap.set("berry_pink", "./assets/DazaiBgs/berry_pink.png");
+	LinkMap.set("ocean_blue", "./assets/DazaiBgs/ocean_blue.png");
+	LinkMap.set("honey_yellow", "./assets/DazaiBgs/honey_yellow.png");
+	LinkMap.set("test", "./assets/DazaiBgs/test.png");
+	LinkMap.set("dazai", "./assets/DazaiBgs/dazai.png");
+	LinkMap.set("detective_agency", "./assets/DazaiBgs/detectiveAgency.png");
+	LinkMap.set("ani_galaxy", "./assets/DazaiBgs/ani_galaxy.gif");
+	LinkMap.set("ani_shelter", "./assets/DazaiBgs/ani_shelter.gif");
+	LinkMap.set("ani_demonslayer", "./assets/DazaiBgs/ani_demonslayer.gif");
+	LinkMap.set("ani_dazai", "./assets/DazaiBgs/ani_dazai.gif");
+
+	ColorMap.set("red", [208, 33, 33]);
+	ColorMap.set("yellow", [237, 230, 12]);
+	ColorMap.set("cyan", [0, 200, 200]);
+	ColorMap.set("blue", [12, 68, 237]);
+	ColorMap.set("black", [20, 20, 20]);
+	ColorMap.set("white", [235, 235, 235]);
+
+})();
 function refreshSpotify(refresh_token) {
 	return new Promise(function (resolve, reject) {
 		var authOptions = {
@@ -204,7 +403,7 @@ bot.on("ready", async () => {
 	});
 	Axios.post("https://api.dazai.app/api/reportShard",{
 		token : bot.token,
-		guildCount: bot.guilds.size,
+		guildCount: bot.guilds.size(),
 		commands: commands,
 		perms: bot.permissionsHandler.getallPerms(),
 		shard: process.env.PROCESSID,
@@ -217,14 +416,14 @@ bot.on("ready", async () => {
 	}, 1000);
 	// bot.commands = bot.commands.filter(x=>x.name);
 });
-const express = require('express');
+const express = require("express");
 const server = express();
-server.all('/', (req, res)=>{
-    res.send('Dazai ping!')
-})
-server.listen(8000);
-console.log("Server is Ready!")
-module.exports = ()=>{ server.listen(8000, ()=>{console.log("Server is Ready!")});
+server.all("/", (req, res)=>{
+	res.send("Dazai ping!");
+});
+server.listen(3000);
+console.log("Server is Ready!");
+module.exports = ()=>{ server.listen(3000, ()=>{console.log("Server is Ready!");});
 };
 // const nodeUtil = require('util');
 // if (!process.env.APIAUTH){
