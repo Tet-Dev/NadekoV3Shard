@@ -114,20 +114,25 @@ class RankCardHandler {
 		let key = genID(25);
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (res, rej) => {
-			while (this.waits.has(key)) {
-				key = genID(25);
+			try {
+				while (this.waits.has(key)) {
+					key = genID(25);
+				}
+				
+				// await streamWrite(this.instance.stdin, prompt);
+				// console.log(this.getCurrent());
+				// eslint-disable-next-line no-undef
+				rankCardGenerator.send([level, xp, next, currentFormatted, nextFormatted, colorschemeR, colorschemeG, colorschemeB, rank, avatar, bgimg, name, bgimg.endsWith(".gif") ? "gif" : "png", key].join(" "));
+				// await streamWrite(rankCardGenerator.stdin,Buffer.from([level, xp, next, currentFormatted, nextFormatted, colorschemeR, colorschemeG, colorschemeB, rank, avatar, bgimg, name, bgimg.endsWith(".gif")?"gif":"png"].join(" "))).catch(er=>console.trace(er));
+	
+				this.waits.set(key, {
+					cb: (path) => { console.log(path); res(path); },
+				});
+				console.log("written!");		
+			} catch (error) {
+				console.trace(error);
 			}
-			console.log("c");
-			// await streamWrite(this.instance.stdin, prompt);
-			// console.log(this.getCurrent());
-			// eslint-disable-next-line no-undef
-			rankCardGenerator.send([level, xp, next, currentFormatted, nextFormatted, colorschemeR, colorschemeG, colorschemeB, rank, avatar, bgimg, name, bgimg.endsWith(".gif") ? "gif" : "png", key].join(" "));
-			// await streamWrite(rankCardGenerator.stdin,Buffer.from([level, xp, next, currentFormatted, nextFormatted, colorschemeR, colorschemeG, colorschemeB, rank, avatar, bgimg, name, bgimg.endsWith(".gif")?"gif":"png"].join(" "))).catch(er=>console.trace(er));
 
-			this.waits.set(key, {
-				cb: (path) => { console.log(path); res(path); },
-			});
-			console.log("written!");
 		});
 	}
 }

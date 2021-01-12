@@ -128,7 +128,7 @@ class LevellingHandler {
 		const levelup = Math.round(100 * data.level ** 1.3);
 		let cs = ColorMap.get(sprefs.personalcolor && sprefs.personalcolor === "default" ? "white" : sprefs.personalcolor) || [235, 235, 235];
 		let bgLink = LinkMap.get(sprefs.personalbg) || LinkMap.get("spacegray");
-		console.log("b");
+		
 		let rcpath = await bot.RankCardHandler.generateCard(data.level, data.exp, levelup, nFormatter(data.exp), nFormatter(levelup), cs[0], cs[1], cs[2], lb.pos, avatar, bgLink, nick);
 		return {
 			boofer: await fsp.readFile(rcpath),
