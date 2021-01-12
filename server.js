@@ -332,7 +332,11 @@ bot.RankCardHandler = new RankCardHandler(bot);
 bot.simps = ["Axilotl#5827"];
 bot.botMasters = ["295391243318591490", "694234706430001222", "678335216154181666"];
 bot.reportBlocklist = [];
-
+let cookies = fs.readdirSync("./YTCookies");
+bot.ytCookies = [];
+for (let i = 0 ; i < cookies.length;i++){
+	bot.ytCookies.push(fs.readFileSync(`./YTCookies/${cookies[i]}`).toString());
+}
 //Tet , Ollie , Grify
 bot.PunishmentHandler.loadPunishments();
 bot.SBM = new ServerBoostManager(bot);
