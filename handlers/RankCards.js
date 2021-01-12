@@ -117,6 +117,7 @@ class RankCardHandler {
 			while (this.waits.has(key)) {
 				key = genID(25);
 			}
+			console.log("c");
 			// await streamWrite(this.instance.stdin, prompt);
 			// console.log(this.getCurrent());
 			// eslint-disable-next-line no-undef

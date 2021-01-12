@@ -7,7 +7,7 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 function text_truncate(str, len) {
 	let array = str.split("");
 	array.length = len - 3;
-	return array.join("") + "...";
+	return array.join("") + "...";	
 }
 // const Imgbb = require('imgbbjs')
 const Imgbb = require("imgbbjs");
@@ -33,6 +33,7 @@ module.exports = new GuildCommand({
 			if (params[0].startsWith("<@")) params[0] = params[0].replace(/\<\@/g, "").replace(/\>/g, "").replace(/\!/g, "");
 			refMem = (await client.getRESTGuildMember(msg.guildID, params[0])) || refMem;
 		}
+		console.log("a");
 		let img = await client.LevellingHandler.generateRankCard(refMem, refMem.guild);
 		let stats = await fsp.stat(img.path);
 		if (stats.size > 8388119) {
