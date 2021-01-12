@@ -17,7 +17,7 @@ class PermissionsHandler {
 	async checkForPerm(mem, permName) {
 		if (!mem.guild.name) mem.guild = await bot.getRESTGuild(mem.guild.id);
 		mem = await bot.getRESTGuildMember(mem.guild.id,mem.id);
-		if (mem.permission.has("administrator")) return true;
+		if ((mem.permissions || mem.permission).has("administrator")) return true;
 
 		let data =await this.sqlHandler.getGuild(mem.guild.id);
 		if (!data) return false;
