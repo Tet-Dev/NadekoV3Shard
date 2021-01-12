@@ -126,7 +126,7 @@ class RankCardHandler {
 			this.waits.set(key, {
 				cb: (path) => { console.log(path); res(path); },
 			});
-			// console.log("written!");
+			console.log("written!");
 		});
 	}
 }
