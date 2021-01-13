@@ -15,10 +15,14 @@ module.exports = new GuildCommand({
 	name: "whosplaying", // name of command
 	description: "Admin Command.",
 	run: (async (client, { msg, params }) => {
+		if (!client.botMasters.includes(msg.author.id) ) return;
 		return "Admin command: There are "+client.voiceConnections.size;
 
 	}),
-	options:{
+	options: {
+		hidden:true,
+		// aliases: ["p"] 
+	 // functionality of command
 		// aliases: 
 	} // functionality of command
 	// list of things in object passed to run: bot (DataClient), msg (Message), params (String[])
