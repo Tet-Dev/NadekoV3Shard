@@ -190,7 +190,8 @@ module.exports = new GuildCommand({
 						}
 					}
 				})();
-				let choice = await getChoice(client,promptMSG,msg.author.id)
+				let choice = await getChoice(client,promptMSG,msg.author.id);
+				if (!choice) return;
 				if (choice.name === "❌") promptMSG.delete();
 				for (var i = 0; i < choices.length; i++) {
 					if (choice.name === choices[i]) {

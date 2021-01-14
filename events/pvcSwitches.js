@@ -28,9 +28,9 @@ module.exports = new DiscordEvent({
 		if (oldChan.name === "Dazai Private Lounge") {
 			if (oldChan.voiceMembers.size == 0) oldChan.delete();
 		}
-		setTimeout(async () => {
-			if (newChan.voiceMembers.filter(x => !x.bot).length == 0) bot.leaveVoiceChannel(newChan.id);
-		}, 60000);
+		// setTimeout(async () => {
+		// 	if (newChan.voiceMembers.filter(x => !x.bot).length == 0) bot.leaveVoiceChannel(newChan.id);
+		// }, 60000);
 	}
 });
 

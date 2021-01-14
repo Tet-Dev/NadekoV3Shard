@@ -42,23 +42,30 @@ class AIManager {
 		while (true) {
 			while (queue.length == 0) await sleep(10);
 			let comment = queue.shift();
-			const analyzeRequest = {
-				comment: {
-					text: comment.data,
-				},
-				requestedAttributes: {
-					TOXICITY: {},
-					SEVERE_TOXICITY: {},
-					IDENTITY_ATTACK: {},
-					INSULT: {},
-					PROFANITY: {},
-					THREAT: {},
-					SEXUALLY_EXPLICIT: {},
-					FLIRTATION: {},
-				}
-			};
-			let res = await this.getComment(analyzeRequest);
-			comment.resfunc(res);
+			try {
+			
+				const analyzeRequest = {
+					comment: {
+						text: comment.data,
+					},
+					requestedAttributes: {
+						TOXICITY: {},
+						SEVERE_TOXICITY: {},
+						IDENTITY_ATTACK: {},
+						INSULT: {},
+						PROFANITY: {},
+						THREAT: {},
+						SEXUALLY_EXPLICIT: {},
+						FLIRTATION: {},
+					}
+				};
+				let res = await this.getComment(analyzeRequest);
+				comment.resfunc(res);
+				await sleep(250);
+			} catch (error) {
+				comment.rej(error);
+			}
+
 		}
 	}
 	
@@ -67,7 +74,8 @@ class AIManager {
 			
 			queue.push({
 				data: msg.content,
-				resfunc: res
+				resfunc: res,
+				rej:rej
 			});
 		});
 	}

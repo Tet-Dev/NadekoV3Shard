@@ -47,7 +47,8 @@ module.exports = new DiscordEvent({
 			});
 			// if (channe)
 			// console.log("processing")
-			let res = await bot.AIManager.analyzeComment(msg);
+			let res = await bot.AIManager.analyzeComment(msg).catch(er=>console.error(er));
+			if (!res) return;
 
 			let scores = Object.keys(res.attributeScores).sort((a, b) => res.attributeScores[b].summaryScore.value - res.attributeScores[a].summaryScore.value);
 			// console.log(res.attributeScores);
@@ -76,25 +77,26 @@ module.exports = new DiscordEvent({
 					}
 				}
 				switch (channelData.Consequence) {
-					case "warn":
+				case "warn":
+					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn",
+					);
+					break;
+				case "mute":
+					
+					break;
 
-						break;
-					case "mute":
-
-						break;
-
-					default:
-						msg.channel.createMessage({
-							content: `Hey uh ${msg.author.mention}, this is kinda ${wordStr} of you to say! Maybe try being a bit kinder?`,
-							embed: {
-								description: msg.content,
-								author:{
-									name: `${(msg.member.nick || msg.author.username )}#${msg.author.discriminator}`,
-									icon_url: msg.author.dynamicAvatarURL("png",256)
-								}
+				default:
+					msg.channel.createMessage({
+						content: `Hey uh ${msg.author.mention}, this is kinda ${wordStr} of you to say! Maybe try being a bit kinder?`,
+						embed: {
+							description: msg.content,
+							author:{
+								name: `${(msg.member.nick || msg.author.username )}#${msg.author.discriminator}`,
+								icon_url: msg.author.dynamicAvatarURL("png",256)
 							}
-						});
-						break;
+						}
+					});
+					break;
 				}
 				//messageReferenceID;
 			}
