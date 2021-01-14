@@ -2,6 +2,15 @@
 const moment = require("moment");
 //------------------------------------------------ BASIC CONSTS
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+function genID(length) {
+	var result = "";
+	var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	var charactersLength = characters.length;
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
 //------------------------------------------------
 let sqlConnection;
 let bot;
@@ -115,6 +124,17 @@ class PunishmentHandler {
 		}, 120000);
 
 	}
+	async addWarn(userid,warnerId,guildId,reason){
+		let warnID = genID(16);
+		await bot.SQLHandler.genericSet("guildwarnings","warningID",warnID,{
+			userid: userid,
+			guildid: guildId,
+			reason: reason,
+			warner: warnerId,
+			timestamp: Date.now()
+		});
+		return warnID;
+	}
 	async addPunishment(guild, member, type, durationInMS, reason, modResponsible) {
 		let guildid = guild.id;
 		let userid = member.user.id;
@@ -198,7 +218,18 @@ class PunishmentHandler {
 				}, (durationInMS)) : null),
 			});
 			
-		} else {
+		} else if (type === "warn"){
+			try {
+				let dmChann = await bot.getDMChannel(userid);
+				bot.createMessage(dmChann.id, "**You have been warned from `" + guild.name + "` for `"+reason + "````\nWarned by " + modResponsible.username + "#" + modResponsible.discriminator);
+				await this.addWarn(userid,modResponsible.id,guildid,reason);
+			} catch (error) {
+
+			}
+
+
+			
+		}else {
 			return Promise.reject("Not mute or ban");
 		}
 		await sqlConnection.updatePunishments(guild.id,{

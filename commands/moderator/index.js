@@ -1,31 +1,15 @@
 
 const { GuildCommand } = require("eris-boiler/lib");
 
-const prefix = require("./prefix");
-const mod = require("./mod");
-const list = require("../list;
-const dj = require("./dj");
-const extraRole = require("./extraRole");
-const extraRole2 = require("./extraRole2");
-const levelRewards = require("./levelRewards");
-const keeproleswhenlevel = require("./keepRolesWhenLevel");
-const messageEvents = require("./messageEvents");
-const betaMode = require("./betaMode");
+const list = require("./list");
+const setup = require("./setup");
 module.exports = new GuildCommand({
 	name: "moderator",
 	description: "Change some settings for the server moderator :)",
 	options: {
 		subCommands: [
-			prefix,
-			mod,
-			dj,
-			admin,
 			list,
-			extraRole2,
-			keeproleswhenlevel,
-			levelRewards,
-			messageEvents,
-			betaMode,
+			setup
 		]
 	},
 	run: async function (bot, context) {
