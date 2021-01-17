@@ -157,7 +157,7 @@ module.exports = new SettingCommand({
 		let flirtation = parseInt(res1.content);
 		if (flirtation > 100 || flirtation < 0)
 			return "Flirtation has to be bigger than or equal to 0 and less than or equal to 100";
-		await bot.createMessage(msg.channel.id, "And finally, what should I do when I find someone engaging in any of the behaviors? valid options are `mute DURATION`,`warn` or `polite`(politely asks them to try again)");
+		await bot.createMessage(msg.channel.id, "And finally, what should I do when I find someone engaging in any of the behaviors? valid options are `mute DURATION`,`warn` or `polite`(politely asks them to try again)\nCurrently warn and polite only work!");
 		res1 = await getNextMessageForPrompt(bot, msg);
 		if (!res1.content || res1.content.toLowerCase() === "cancel") {
 			return "Request Cancelled!";
