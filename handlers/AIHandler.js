@@ -63,6 +63,7 @@ class AIManager {
 				comment.resfunc(res);
 				await sleep(250);
 			} catch (error) {
+				console.trace(error);
 				comment.rej(error);
 			}
 
