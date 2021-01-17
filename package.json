@@ -34,7 +34,7 @@
     "eris-boiler": "github:tet-dev/eris-boiler",
     "eris-collector": "^1.0.1",
     "eris-pagination": "github:riyacchi/eris-pagination",
-    "eris-reactions": "^0.1.3",
+    "eris-reactions": "github:riyacchi/eris-reactions",
     "erlpack": "^0.1.3",
     "express": "^4.17.1",
     "fapi-client": "^0.3.4",

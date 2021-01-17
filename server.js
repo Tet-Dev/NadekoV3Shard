@@ -71,7 +71,7 @@ const options = {
 		sendIDOnly: true,
 		firstShardID: Number(process.env.PROCESSID),
 		lastShardID: Number(process.env.PROCESSID),
-		maxShards: 2,
+		maxShards: 1,
 	},
 };
 const RarityColors = {
@@ -431,7 +431,8 @@ server.all("/", (req, res)=>{
 server.listen(3000);
 console.log("Server is Ready!");
 module.exports = ()=>{ server.listen(3000, ()=>{console.log("Server is Ready!");});
-};
+
+e};
 // const nodeUtil = require('util');
 // if (!process.env.APIAUTH){
 // 	console.log = async (...data) => {
