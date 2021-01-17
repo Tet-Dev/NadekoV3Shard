@@ -39,7 +39,6 @@ const fetch = require("node-fetch");
 const { Image } = imagescript;
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 const axios = require("axios");
-const { Imag } = require("@tensorflow/tfjs");
 const watermark = Image.renderText(obontu, 24, "Dazai", Image.rgbToColor(255, 255, 255), 450, Image.WRAP_STYLE_WORD);
 let queue = [];
 process.on("message", (data) => {

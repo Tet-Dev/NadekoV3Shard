@@ -89,6 +89,9 @@ const RarityColors = {
 // addtoArr(uberRareWeight.weight, "uber");
 // addtoArr(legendaryWeight.weight, "legendary");
 //Inits arrs
+async function UserUnlock(){
+	
+}
 (() => {
 	shopOffers.push({
 		idName: "persona3anime",

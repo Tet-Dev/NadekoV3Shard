@@ -81,7 +81,7 @@ module.exports = new DiscordEvent({
 				}
 				switch (channelData.Consequence) {
 				case "warn":
-					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn", 0, "", bot.user);
+					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn", 0, `Being ${wordStr} in chat. Said "${msg.content}"`, bot.user);
 					break;
 				case "mute":
 					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn", 0, "", bot.user);

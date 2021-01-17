@@ -1,6 +1,6 @@
 const { GuildCommand } = require("eris-boiler/lib");
 const imagescript = require("imagescript");
-const fetch = require('node-fetch');
+const fetch = require("node-fetch");
 const fs = require("fs");
 const axios = require("axios");
 const fsp = fs.promises;
@@ -38,24 +38,29 @@ module.exports = new GuildCommand({
 	name: "nowplaying", // name of command
 	description: "Displays whats playing right now!",
 	run: (async (client, { msg, params }) => {
-		let dat = await client.MusicHandler.getCurrentSong(msg.guildID);
+		try {
+			let dat = await client.MusicHandler.getCurrentSong(msg.guildID);
 
-		console.log({
-			auth: client.token,
-			startTime: dat[1],
-			song: dat[0],
-			guild: msg.guildID,
-			channel: msg.channel.id,
-		});
-		if (!dat) return "Nothing is Playing!";
-		let dat2 = await axios.post("https://api.dazai.app/api/generateMusicCard",{
-			auth: client.token,
-			startTime: dat[1],
-			song: dat[0],
-			guild: msg.guildID,
-			channel: msg.channel.id,
-		}).catch(er=>{});
-    // console.log(dat2.data,dat2.status)
+			console.log({
+				auth: client.token,
+				startTime: dat[1],
+				song: dat[0],
+				guild: msg.guildID,
+				channel: msg.channel.id,
+			});
+			if (!dat) return "Nothing is Playing!";
+			let dat2 = await axios.post("https://api.dazai.app/api/generateMusicCard",{
+				auth: client.token,
+				startTime: dat[1],
+				song: dat[0],
+				guild: msg.guildID,
+				channel: msg.channel.id,
+			}).catch(er=>{});
+		} catch (error) {
+			msg.channel.createMessage("Are you 100% sure something's playing right now?");
+		}
+		
+		// console.log(dat2.data,dat2.status)
 		// let path = await client.MusicHandler.sendMessage(dat);
 		// await client.createMessage(msg.channel.id, {
 		// },{file: await fsp.readFile(path),name: "DazaiNP.png"});
