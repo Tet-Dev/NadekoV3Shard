@@ -42,9 +42,12 @@ module.exports = new DiscordEvent({
 			if (guilddata.AImessagesLeft == 0){
 				return;
 			} 
-			await bot.SQLHandler.updateGuild(msg.guildID,{
-				AImessagesLeft: guilddata.AImessagesLeft-1
-			});
+			if (guilddata.AImessagesLeft > 0){
+				await bot.SQLHandler.updateGuild(msg.guildID,{
+					AImessagesLeft: guilddata.AImessagesLeft-1
+				});
+			}
+			
 			// if (channe)
 			// console.log("processing")
 			let res = await bot.AIManager.analyzeComment(msg).catch(er=>console.error(er));
@@ -78,11 +81,10 @@ module.exports = new DiscordEvent({
 				}
 				switch (channelData.Consequence) {
 				case "warn":
-					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn",
-					);
+					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn", 0, "", bot.user);
 					break;
 				case "mute":
-					
+					bot.PunishmentHandler.addPunishment(msg.member.guild,msg.member,"warn", 0, "", bot.user);
 					break;
 
 				default:

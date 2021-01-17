@@ -203,7 +203,7 @@ class PunishmentHandler {
 				let dmChann = await bot.getDMChannel(userid);
 				bot.createMessage(dmChann.id, "**You have been banned from `" + guild.name + "` for `" + moment.duration(durationInMS).humanize() + "`**\n__Reason__\n```" + reason + "```\nBanned by " + modResponsible.username + "#" + modResponsible.discriminator);
 			} catch (error) {
-
+				
 			}
 			member.ban(0, "Banned by "+modResponsible.username + "#" + modResponsible.discriminator);
 			bans.push({
@@ -224,7 +224,7 @@ class PunishmentHandler {
 				bot.createMessage(dmChann.id, "**You have been warned from `" + guild.name + "` for `"+reason + "````\nWarned by " + modResponsible.username + "#" + modResponsible.discriminator);
 				await this.addWarn(userid,modResponsible.id,guildid,reason);
 			} catch (error) {
-
+				console.trace(error);
 			}
 
 

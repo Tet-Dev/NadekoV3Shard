@@ -48,7 +48,6 @@ module.exports = new Command({
 		let post = posts[Math.floor(Math.random() * posts.length)];
 		return {
 			embed: {
-				title: "A Safe For Work",
 				url: post.postView,
 				description: `Posted at ${moment(post.createdAt.getTime()).fromNow()}`,
 				image: {
