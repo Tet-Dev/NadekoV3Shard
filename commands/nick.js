@@ -15,8 +15,8 @@ module.exports = new GuildCommand({
 	name: "nick", // name of command
 	description: "Changes somebody's nickname and \"Locks\" it (Preventing modification)",
 	run: (async (client, { msg, params }) => {
-		if (!(await client.permissionsHandler.checkForPerm(msg.member, "nick"))) {
-			return "You lack the permission `nick`";
+		if (!(await client.permissionsHandler.checkForPerm(msg.member, "nickLock"))) {
+			return "You lack the permission `nickLock`";
 		}
 		// return "Command WIP";
 		let mention = msg.mentions[0];
