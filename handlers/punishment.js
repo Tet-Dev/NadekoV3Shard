@@ -221,7 +221,7 @@ class PunishmentHandler {
 		} else if (type === "warn"){
 			try {
 				let dmChann = await bot.getDMChannel(userid);
-				bot.createMessage(dmChann.id, "You have been warned from `" + guild.name + "` for `"+reason + "````\nWarned by **" + modResponsible.username + "#" + modResponsible.discriminator+"**");
+				bot.createMessage(dmChann.id, "You have been warned from `" + guild.name + "` for "+reason + "```\nWarned by " + modResponsible.username + "#" + modResponsible.discriminator+"```");
 				await this.addWarn(userid,modResponsible.id,guildid,reason);
 			} catch (error) {
 				console.trace(error);
