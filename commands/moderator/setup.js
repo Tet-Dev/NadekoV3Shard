@@ -68,7 +68,7 @@ module.exports = new SettingCommand({
 	run: async (bot, { msg, params }) => {
 		let refmsg = msg;
 		if (!await bot.permissionsHandler.checkForPerm(msg.member, "admin")) return "Admin role is required to execute this command!";
-		if (! await client.SQLHandler.serverIsBeta(msg.guildID)) return "This feature is currently avalible for Beta servers only! To set your server as a beta server, set `mode` in `settings` to `beta`!";
+		if (! await bot.SQLHandler.serverIsBeta(msg.guildID)) return "This feature is currently avalible for Beta servers only! To set your server as a beta server, set `mode` in `settings` to `beta`!";
 		await bot.createMessage(msg.channel.id, `Please mention all the channels you would like to have AI moderation on! ex: <#${msg.channel.id}> or type \`cancel\` to cancel.`);
 
 		let res1 = await getNextMessageForPrompt(bot, msg);

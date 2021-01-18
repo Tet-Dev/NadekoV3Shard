@@ -32,7 +32,7 @@ module.exports = new GuildCommand({
 		let ClientMem = await client.getRESTGuildMember(msg.guildID, client.user.id);
 		let botRoles = allRoles.filter(x => ClientMem.roles.includes(x.id));
 		if (!botRoles.length) {
-			return "Hmm, I dont seem to have any roles! Make sure to give me the appropriate roles!"
+			return "Hmm, I dont seem to have any roles! Make sure to give me the appropriate roles!";
 		}
 		// if (!ClientMem.permissions.has("manageNicknames")) return "I need the ability to change other people's nicknames!"
 		let highestBotRole = botRoles[0];
