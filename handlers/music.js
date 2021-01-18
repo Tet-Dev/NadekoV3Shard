@@ -32,12 +32,12 @@ function genID(length) {
 let cp;
 let songqueue;
 let npMaps = new Map();
-//SongData
-{
-	title: "A Centemeter apart",
-	artist: "Geoxor",
-	
-}
+// //SongData
+// {
+// 	title: "A Centemeter apart",
+// 	artist: "Geoxor",
+
+// }
 class MusicHandler {
 	constructor(bot) {
 		this.bot = bot;
