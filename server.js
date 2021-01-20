@@ -2,7 +2,7 @@
 const { DataClient } = require("eris-boiler");
 const path = require("path");
 const { join } = path;
-const MusicHandler = require("./handlers/musicV2");
+const MusicHandler = require("./handlers/musicV2.js");
 const SQLHandler = require("./handlers/SQLCommunicator");
 const requestAPI = require("request");
 var SpotifyWebApi = require("spotify-web-api-node");
