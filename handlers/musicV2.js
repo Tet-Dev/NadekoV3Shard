@@ -273,8 +273,8 @@ class MusicHandler {
 		// let queue = await Promise.all(data.queue.map(async (x) => await this.checkCacheFor(x)));
 		return queue.map((x, ind) => {
 			return {
-				"name": x.videoDetails.title || "UNKNOWN",
-				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.videoDetails.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}【。】[${data.queue[ind].song}]`
+				"name": x.title || "UNKNOWN",
+				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}【。】[${data.queue[ind].song}]`
 			};
 
 		}).filter(x => x);
