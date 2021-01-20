@@ -49,7 +49,7 @@ function parseBasicInfo(info) {
 		title: info.videoDetails.title,
 		artist: info.videoDetails.author.name,
 		lengthSeconds: info.videoDetails.lengthSeconds,
-		thumbnail: info.videoDetails.thumbnails.sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
+		thumbnail: info.videoDetails.thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
 		artistPfp: info.videoDetails.author.thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
 	};
 }
@@ -206,7 +206,7 @@ class MusicHandler {
 				title: songData[i].title,
 				artist: songData[i].author.name,
 				lengthSeconds: songData[i].durationSec,
-				thumbnail: songData[i].thumbnails.sort((a, b) => b.width * b.height - a.width * a.height).shift().url.split("?")[0],
+				thumbnail: songData[i].thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url.split("?")[0],
 				artistPfp: "https://dazai.app/assets/img/dazai-Xtrasmoll256.png",
 			});
 			await sleep(1);
