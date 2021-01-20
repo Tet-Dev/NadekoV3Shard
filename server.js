@@ -2,8 +2,8 @@
 const { DataClient } = require("eris-boiler");
 const path = require("path");
 const { join } = path;
-const SQLHandler = require("./handlers/SQLCommunicator");
 const MusicHandler = require("./handlers/musicV2");
+const SQLHandler = require("./handlers/SQLCommunicator");
 const requestAPI = require("request");
 var SpotifyWebApi = require("spotify-web-api-node");
 const PermissionsHandler = require("./handlers/permissionHandler");
@@ -424,6 +424,7 @@ bot.on("ready", async () => {
 	// bot.commands = bot.commands.filter(x=>x.name);
 });
 const express = require("express");
+const MusicHandler = require("./handlers/musicV2");
 const server = express();
 server.all("/", (req, res)=>{
 	res.send("Dazai ping!");
