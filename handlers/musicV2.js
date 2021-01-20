@@ -1,7 +1,6 @@
 
 const ytdl = require("ytdl-core");
 const axios = require("axios");
-const { spawn, fork } = require("child_process");
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 function SecsToFormat(string) {
 	var sec_num = parseInt(string, 10);
