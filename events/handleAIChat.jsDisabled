@@ -6,6 +6,7 @@ const { link } = require("fs");
 module.exports = new DiscordEvent({
 	name: "messageCreate",
 	run: async (bot, msg) => {
+		
 		if (msg.content.startsWith(".")) return;
 		if (msg.content.match(/<((:|a:)\w+:\d+)|(@(!|&)?\d+)>/g)) return;
 		msg.content = msg.content.replace(/(d|D)azai/g,"you");
