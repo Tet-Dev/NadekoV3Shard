@@ -50,7 +50,7 @@ function parseBasicInfo(info) {
 		artist: info.videoDetails.author.name,
 		lengthSeconds: info.videoDetails.lengthSeconds,
 		thumbnail: info.videoDetails.thumbnails.sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
-		artistPfp: info.videoDetails.author.thumbnails.sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
+		artistPfp: info.videoDetails.author.thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
 	};
 }
 class MusicHandler {
