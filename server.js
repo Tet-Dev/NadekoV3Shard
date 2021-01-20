@@ -316,6 +316,7 @@ bot.LinkMap = LinkMap;
 bot.ColorMap = ColorMap;
 bot.shopOffers = shopOffers;
 bot.SQLHandler = new SQLHandler(bot);
+console.log(MusicHandler);
 bot.MusicHandler = new MusicHandler(bot);
 bot.permissionsHandler = new PermissionsHandler(bot.SQLHandler, bot);
 bot.EconomyHandler = new EconomyHandler(bot);
