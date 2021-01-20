@@ -31,9 +31,9 @@ function genID(length) {
 let cp;
 let songqueue;
 let npMaps = new Map();
-function getStreamInfo(stream){
-	return new Promise((res,rej)=>{
-		stream.on("info",(info)=>res(info));
+function getStreamInfo(stream) {
+	return new Promise((res, rej) => {
+		stream.on("info", (info) => res(info));
 	});
 }
 // //SongData
@@ -111,7 +111,7 @@ class MusicHandler {
 				},
 			});
 			let info = parseBasicInfo(await getStreamInfo(stream));
-			this.songCache.set(songLink,info);
+			this.songCache.set(songLink, info);
 			// stream._readableState.needReadable = false;
 			// connection.play("./moonLight.mp4");
 			// connection.stopPlaying();
@@ -194,15 +194,15 @@ class MusicHandler {
 			};
 		}));
 		// //SongData
-// {
-// 	title: "A Centemeter apart",
-// 	artist: "Geoxor",
-// 	lengthSeconds: 500,
-// 	thumbnail: "ytlink",
-// 	artistPfp: "ytlink",
-// }
+		// {
+		// 	title: "A Centemeter apart",
+		// 	artist: "Geoxor",
+		// 	lengthSeconds: 500,
+		// 	thumbnail: "ytlink",
+		// 	artistPfp: "ytlink",
+		// }
 		for (let i = 0; i < songData.length; i++) {
-			this.songCache.set(songData[i].shortUrl,{
+			this.songCache.set(songData[i].shortUrl, {
 				title: songData[i].title,
 				artist: songData[i].author.name,
 				lengthSeconds: songData[i].durationSec,
@@ -274,7 +274,7 @@ class MusicHandler {
 		return queue.map((x, ind) => {
 			return {
 				"name": x.videoDetails.title || "UNKNOWN",
-				"value": `#${ind+1} 《 Duration 「${SecsToFormat((x.videoDetails.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}【。】[${data.queue[ind].song}]`
+				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.videoDetails.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}【。】[${data.queue[ind].song}]`
 			};
 
 		}).filter(x => x);
