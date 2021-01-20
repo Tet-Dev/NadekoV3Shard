@@ -124,9 +124,9 @@ class PunishmentHandler {
 		}, 120000);
 
 	}
-	async addWarn(userid,warnerId,guildId,reason){
+	async addWarn(userid, warnerId, guildId, reason) {
 		let warnID = genID(16);
-		await bot.SQLHandler.genericSet("guildwarnings","warningID",warnID,{
+		await bot.SQLHandler.genericSet("guildwarnings", "warningID", warnID, {
 			userid: userid,
 			guildid: guildId,
 			reason: reason,
@@ -145,10 +145,10 @@ class PunishmentHandler {
 			durationInMS = Infinity;
 		}
 		if (type === "mute") {
-			
+
 			mutePunishes.push({
 				userid: userid,
-				expires: Math.floor((durationInMS + Date.now())/ 1000),
+				expires: Math.floor((durationInMS + Date.now()) / 1000),
 			});
 			try {
 				let dmChann = await bot.getDMChannel(userid);
@@ -156,28 +156,28 @@ class PunishmentHandler {
 				// eslint-disable-next-line no-empty
 			} catch { }
 			//Add Muted Role
-			(async ()=>{
-				let mutedRoles = guild.roles.filter(x=>x.name === "Muted");
-				mutedRoles.sort((a,b)=>b.position-a.position);
+			(async () => {
+				let mutedRoles = guild.roles.filter(x => x.name === "Muted");
+				mutedRoles.sort((a, b) => b.position - a.position);
 				let mutedRole = mutedRoles[0];
-				if (!mutedRole){
-					let botmem = await bot.getRESTGuildMember(guild.id,bot.user.id);
-					let botRoles = guild.roles.filter(x=>botmem.roles.includes(x.id));
-					botRoles.sort((a,b)=>b.position-a.position);
-					let newRole = await bot.createRole(guild.id,{
+				if (!mutedRole) {
+					let botmem = await bot.getRESTGuildMember(guild.id, bot.user.id);
+					let botRoles = guild.roles.filter(x => botmem.roles.includes(x.id));
+					botRoles.sort((a, b) => b.position - a.position);
+					let newRole = await bot.createRole(guild.id, {
 						name: "Muted",
 						permissions: 0,
 						mentionable: false,
 					});
-					await newRole.editPosition(botRoles[0].position > 0? botRoles[0].position-1:0);
+					await newRole.editPosition(botRoles[0].position > 0 ? botRoles[0].position - 1 : 0);
 					mutedRole = newRole;
 				}
-				await member.addRole(mutedRole.id,"Muted");
+				await member.addRole(mutedRole.id, "Muted");
 			})();
 			mutes.push({
 				userid: userid,
 				guild: guildid,
-				expires: Math.floor(durationInMS+Date.now() / 1000),
+				expires: Math.floor(durationInMS + Date.now() / 1000),
 				timeout: (Math.floor(durationInMS / 1000) <= 86400 ? setTimeout(async () => {
 					let server = await bot.getRESTGuild(guildid);
 					let mem = await bot.getRESTGuildMember(server.id, userid);
@@ -194,10 +194,10 @@ class PunishmentHandler {
 				}, (durationInMS)) : null),
 			});
 		} else if (type === "ban") {
-			
+
 			banPunishes.push({
 				userid: userid,
-				expires: Math.floor((durationInMS + Date.now())/ 1000),
+				expires: Math.floor((durationInMS + Date.now()) / 1000),
 			});
 			try {
 				let dmChann = await bot.getDMChannel(userid);
@@ -205,11 +205,11 @@ class PunishmentHandler {
 			} catch (error) {
 
 			}
-			member.ban(0, "Banned by "+modResponsible.username + "#" + modResponsible.discriminator);
+			member.ban(0, "Banned by " + modResponsible.username + "#" + modResponsible.discriminator);
 			bans.push({
 				userid: userid,
 				guild: guildid,
-				expires: Math.floor((durationInMS + Date.now())/ 1000),
+				expires: Math.floor((durationInMS + Date.now()) / 1000),
 				timeout: ((durationInMS / 1000) <= 86400 ? setTimeout(async () => {
 					let server = await bot.getRESTGuild(guildid);
 					server.unbanMember(userid, "Temp-ban time up");
@@ -217,22 +217,22 @@ class PunishmentHandler {
 					bot.createMessage(dmChan.id, "Your time is up! You have been Unbanned from **" + server.name + "**.");
 				}, (durationInMS)) : null),
 			});
-			
-		} else if (type === "warn"){
+
+		} else if (type === "warn") {
 			try {
 				let dmChann = await bot.getDMChannel(userid);
-				bot.createMessage(dmChann.id, "You have been warned from `" + guild.name + "` for "+reason + "\nWarned by **" + modResponsible.username + "**#**" + modResponsible.discriminator+"**");
-				await this.addWarn(userid,modResponsible.id,guildid,reason);
+				bot.createMessage(dmChann.id, "You have been warned from `" + guild.name + "` for " + reason + "\nWarned by **" + modResponsible.username + "**#**" + modResponsible.discriminator + "**");
+				await this.addWarn(userid, modResponsible.id, guildid, reason);
 			} catch (error) {
 				console.trace(error);
 			}
 
 
-			
-		}else {
+
+		} else {
 			return Promise.reject("Not mute or ban");
 		}
-		await sqlConnection.updatePunishments(guild.id,{
+		await sqlConnection.updatePunishments(guild.id, {
 			muted: stringifyPunish(mutePunishes),
 			tempbanned: stringifyPunish(banPunishes),
 		});

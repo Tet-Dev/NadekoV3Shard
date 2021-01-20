@@ -127,7 +127,7 @@ module.exports = new GuildCommand({
 					msg.member.voiceState.channelID
 				);
 				let res = await ytpl(search.split("list=")[1].split("&")[0]);
-				client.MusicHandler.queueArray(msg, res.items.map(x => x.url).filter(x => x), connection, msg.channel, true);
+				client.MusicHandler.queueArray(msg, res.items, connection, msg.channel, true);
 			} else if (search.split("https://www\.youtube\.com/watch?").length > 1 || search.includes("https://youtu.be/")) {
 				console.log("Joining");
 				const connection = await client.joinVoiceChannel(
