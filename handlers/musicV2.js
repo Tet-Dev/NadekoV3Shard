@@ -214,7 +214,7 @@ class MusicHandler {
 
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
-		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime,data.currentsong.userAdded.nick];
+		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime,`${data.currentsong.userAdded.nick || data.currentsong.userAdded.user.username}#${data.currentsong.userAdded.user.discriminator}`];
 	}
 	toggleLoop(guildID) {
 		let data = this.handler.get(guildID);

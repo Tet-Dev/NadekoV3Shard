@@ -55,6 +55,7 @@ module.exports = new GuildCommand({
 				song: dat[0],
 				guild: msg.guildID,
 				channel: msg.channel.id,
+				whom: dat[2],
 			}).catch(er=>{});
 		} catch (error) {
 			msg.channel.createMessage("Are you 100% sure something's playing right now?");
