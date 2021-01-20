@@ -424,7 +424,7 @@ bot.on("ready", async () => {
 	// bot.commands = bot.commands.filter(x=>x.name);
 });
 const express = require("express");
-const MusicHandler = require("./handlers/musicV2");
+// const MusicHandler = require("./handlers/musicV2");
 const server = express();
 server.all("/", (req, res)=>{
 	res.send("Dazai ping!");
