@@ -44,13 +44,32 @@ function getStreamInfo(stream) {
 // 	thumbnail: "ytlink",
 // 	artistPfp: "ytlink",
 // }
+function shuffle(array) {
+	let counter = array.length;
+
+	// While there are elements in the array
+	while (counter > 0) {
+		// Pick a random index
+		let index = Math.floor(Math.random() * counter);
+
+		// Decrease counter by 1
+		counter--;
+
+		// And swap the last element with it
+		let temp = array[counter];
+		array[counter] = array[index];
+		array[index] = temp;
+	}
+
+	return array;
+}
 function parseBasicInfo(info) {
 	return {
 		title: info.videoDetails.title,
 		artist: info.videoDetails.author.name,
 		lengthSeconds: info.videoDetails.lengthSeconds,
-		thumbnail: info.videoDetails.thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
-		artistPfp: info.videoDetails.author.thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
+		thumbnail: info.videoDetails.thumbnails.filter(x => !x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
+		artistPfp: info.videoDetails.author.thumbnails.filter(x => !x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
 	};
 }
 class MusicHandler {
@@ -61,8 +80,6 @@ class MusicHandler {
 		this.YoutubeCookies = process.env.YoutubeCookies;
 		this.YoutubeCookies2 = process.env.YoutubeCookies2;
 		console.log(this.YoutubeCookies);
-		// this.YoutubeCookies2 = this.YoutubeCookies;
-		// this.npMaps = new Map();
 	}
 	async queueSong(guildID, songLink, messageChannelBound, connection, silentAdd, mem) {
 		let msg = guildID;
@@ -79,12 +96,6 @@ class MusicHandler {
 				loop: false,
 			});
 			let data = this.handler.get(guildID);
-
-			// connection = this.bot.voiceConnections.filter(x=>x.id+"" === guildID)[0];
-			// if (!connection){
-			// 	return;
-			// }
-
 			if ((connection ? connection : data.connection).playing) {
 				let info = await this.checkCacheFor(songLink).catch(er => { });
 				if (!info) {
@@ -112,16 +123,9 @@ class MusicHandler {
 			});
 			let info = parseBasicInfo(await getStreamInfo(stream));
 			this.songCache.set(songLink, info);
-			// stream._readableState.needReadable = false;
-			// connection.play("./moonLight.mp4");
-			// connection.stopPlaying();
 			while (!connection.ready && typeof connection.ready !== "undefined") {
 				await (10);
 			}
-			// console.log("Connection Ready!");
-			// connection.play("./assets/moonLight.mp4");
-			// await sleep(750);
-			// connection.stopPlaying();
 			this.bot.voiceConnections.filter(x => x.id + "" === guildID)[0].play(stream);
 			if (!mem) {
 				(connection ? connection : data.connection).on("error", (x) => console.trace(x));
@@ -193,27 +197,16 @@ class MusicHandler {
 				userAdded: guildID.member,
 			};
 		}));
-		// //SongData
-		// {
-		// 	title: "A Centemeter apart",
-		// 	artist: "Geoxor",
-		// 	lengthSeconds: 500,
-		// 	thumbnail: "ytlink",
-		// 	artistPfp: "ytlink",
-		// }
 		for (let i = 0; i < songData.length; i++) {
 			this.songCache.set(songData[i].shortUrl, {
 				title: songData[i].title,
 				artist: songData[i].author.name,
 				lengthSeconds: songData[i].durationSec,
-				thumbnail: songData[i].thumbnails.filter(x=>!x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url.split("?")[0],
+				thumbnail: songData[i].thumbnails.filter(x => !x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url.split("?")[0],
 				artistPfp: "https://dazai.app/assets/img/dazai-Xtrasmoll256.png",
 			});
 			await sleep(1);
 		}
-		// songArr.forEach(x => {
-		// 	this.checkCacheFor(x);
-		// });
 		this.handler.set(guildID.guildID, data);
 		data.channel.createMessage("Added `" + (songArr.length + 1) + "` songs into the queue.");
 	}
@@ -221,8 +214,6 @@ class MusicHandler {
 
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
-		// console.log(data.currentsong)
-		// return [data.currentsong.song, data.currentSongStartTime,data.currentsong.userAdded.username];
 		return [data.currentsong.song, data.currentSongStartTime];
 	}
 	toggleLoop(guildID) {
@@ -257,6 +248,12 @@ class MusicHandler {
 
 
 	}
+	async shufflePlaylist(guildID) {
+		let q = this.handler.get(guildID);
+		if (!q) return false;
+		q.queue = shuffle(q.queue);
+		this.handler.set(guildID,q);
+	}
 	async skipSong(guildID) {
 		this.handler.get(guildID).connection.stopPlaying();
 	}
@@ -274,7 +271,7 @@ class MusicHandler {
 		return queue.map((x, ind) => {
 			return {
 				"name": x.title || "UNKNOWN",
-				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}【。】[${data.queue[ind].song}]`
+				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}(【。】)[${data.queue[ind].song}]`
 			};
 
 		}).filter(x => x);
@@ -296,6 +293,7 @@ class MusicHandler {
 	}
 	async checkCacheFor(item) {
 		let basicInfo = this.songCache.get(item);
+		if (basicInfo) return basicInfo;
 		let attempts = 0;
 		while ((!basicInfo || !basicInfo.videoDetails) && attempts < 10) {
 			attempts++;
