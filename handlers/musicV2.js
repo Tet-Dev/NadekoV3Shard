@@ -210,17 +210,16 @@ class MusicHandler {
 		this.handler.set(guildID.guildID, data);
 		data.channel.createMessage("Added `" + (songArr.length + 1) + "` songs into the queue.");
 	}
-	getCurrentSong(guildID) {
+	async getCurrentSong(guildID) {
 
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
-		return [data.currentsong.song, data.currentSongStartTime];
+		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime,data.currentsong.userAdded.nick];
 	}
 	toggleLoop(guildID) {
 		let data = this.handler.get(guildID);
 		let res = !data.loop;
 		data.loop = res;
-
 		this.handler.set(guildID, data);
 
 		return res;
