@@ -270,7 +270,7 @@ class MusicHandler {
 		return queue.map((x, ind) => {
 			return {
 				"name": x.title || "UNKNOWN",
-				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}(【。】)[${data.queue[ind].song}]`
+				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}[【。】](${data.queue[ind].song})`
 			};
 
 		}).filter(x => x);
