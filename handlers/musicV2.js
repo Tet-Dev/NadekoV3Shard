@@ -44,6 +44,7 @@ function getStreamInfo(stream) {
 // 	thumbnail: "ytlink",
 // 	artistPfp: "ytlink",
 // }
+
 function shuffle(array) {
 	let counter = array.length;
 
@@ -72,6 +73,21 @@ function parseBasicInfo(info) {
 		artistPfp: info.videoDetails.author.thumbnails.filter(x => !x.url.includes(".webp")).sort((a, b) => b.width * b.height - a.width * a.height).shift().url,
 	};
 }
+
+function handleExceptionsAndRace(connection){
+	return new Promise((res,rej) =>{
+		function end(){
+			connection.removeListener("error",error);
+			res("end");
+		}
+		function error(er){
+			connection.removeListener("end",end);
+			res("error");
+		}
+		connection.once("end",end);
+		connection.once("error",error);
+	});
+}
 class MusicHandler {
 	constructor(bot) {
 		this.bot = bot;
@@ -80,6 +96,60 @@ class MusicHandler {
 		this.YoutubeCookies = process.env.YoutubeCookies;
 		this.YoutubeCookies2 = process.env.YoutubeCookies2;
 		console.log(this.YoutubeCookies);
+	}
+	async play(guildID, songLink, messageChannelBound, connection, silentAdd, mem,failed) {
+		try {
+			let msg = guildID;
+			guildID = guildID.guildID;
+			let stream = ytdl(songLink, {
+				highWaterMark: 1024 * 1024,
+				quality: "highestaudio",
+				requestOptions: {
+					headers: {
+						cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
+					},
+				},
+			});
+			let info = parseBasicInfo(await getStreamInfo(stream));
+			this.songCache.set(songLink, info);
+			while (!connection.ready && typeof connection.ready !== "undefined") {
+				await (10);
+			}
+			this.bot.voiceConnections.filter(x => x.id + "" === guildID)[0].play(stream);
+			if (!mem) mem = msg.member;
+			if (!failed){
+				let dat2 = axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
+					auth: this.bot.token,
+					queue: await Promise.all(data.queue.map(async x => await this.checkCacheFor(x.song))),
+					song: await this.checkCacheFor(songLink),
+					guild: msg.guildID,
+					channel: msg.channel.id,
+					whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
+				}).catch(er => { });
+			}
+			
+			console.log({
+				auth: this.bot.token,
+				queue: data.queue.map(x => x.song).filter((x, index) => index < 3),
+				song: songLink,
+				guild: msg.guildID,
+				channel: msg.channel.id,
+				whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
+			});
+			// data.channel.createMessage("Now Playing `" + title + "` !");
+			data.currentsong = {
+				userAdded: msg.member,
+				song: songLink,
+			};
+			data.currentSongStartTime = Math.floor((new Date()).getTime() / 1000);
+			this.handler.set(guildID, data);
+			return connection;
+			// connection.once("error", (x) => console.trace(x));
+			// connection.once("disconnect",async ()=>{
+			// 	await this.removeQueue(guildID,"all");
+			// })
+
+		} catch (er) { console.trace(er); }
 	}
 	async queueSong(guildID, songLink, messageChannelBound, connection, silentAdd, mem) {
 		let msg = guildID;
@@ -95,6 +165,28 @@ class MusicHandler {
 				currentsong: songLink,
 				loop: false,
 			});
+			// (connection ? connection : data.connection).once("end", async () => {
+			// 	console.log("song ended", connection.ready);
+			// 	if (!connection.ready) return data.channel.createMessage("Bot got kicked out!");
+			// 	try {
+			// 		data = this.handler.get(guildID);
+			// 		data.skips = [];
+			// 		//  = "";
+			// 		if (data.loop) data.queue.push(data.currentsong);
+			// 		data.currentsong = null;
+			// 		if (data.queue.length > 0) {
+			// 			let dq = data.queue.shift();
+			// 			await this.queueSong(msg, dq.song, messageChannelBound, connection, false, dq.userAdded).catch(er => { });
+			// 			this.handler.set(guildID, data);
+			// 		} else {
+			// 			data.channel.createMessage("Queue Finished!");
+			// 			this.handler.delete(guildID);
+			// 		}
+			// 	} catch (error) {
+			// 		console.trace(error, "Error");
+			// 	}
+
+			// });
 			let data = this.handler.get(guildID);
 			if ((connection ? connection : data.connection).playing) {
 				let info = await this.checkCacheFor(songLink).catch(er => { });
@@ -112,77 +204,27 @@ class MusicHandler {
 				if (!silentAdd) data.channel.createMessage("Added `" + title + "` to the Queue!");
 				return;
 			}
-			let stream = ytdl(songLink, {
-				highWaterMark: 1024 * 1024,
-				quality: "highestaudio",
-				requestOptions: {
-					headers: {
-						cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
-					},
-				},
-			});
-			let info = parseBasicInfo(await getStreamInfo(stream));
-			this.songCache.set(songLink, info);
-			while (!connection.ready && typeof connection.ready !== "undefined") {
-				await (10);
-			}
-			this.bot.voiceConnections.filter(x => x.id + "" === guildID)[0].play(stream);
-			if (!mem) {
-				(connection ? connection : data.connection).on("error", (x) => console.trace(x));
-				(connection ? connection : data.connection).on("disconnect", async () => {
-					await this.removeQueue(guildID, "all").catch(er => { });
-				});
-			}
-			if (!mem) mem = msg.member;
-			let dat2 = axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
-				auth: this.bot.token,
-				queue: await Promise.all(data.queue.map(async x => await this.checkCacheFor(x.song))),
-				song: await this.checkCacheFor(songLink),
-				guild: msg.guildID,
-				channel: msg.channel.id,
-				whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
-			}).catch(er => { });
-			console.log({
-				auth: this.bot.token,
-				queue: data.queue.map(x => x.song).filter((x, index) => index < 3),
-				song: songLink,
-				guild: msg.guildID,
-				channel: msg.channel.id,
-				whom: `${(mem.nick || mem.user.username)}#${mem.user.discriminator}`,
-			});
-			// data.channel.createMessage("Now Playing `" + title + "` !");
-			data.currentsong = {
-				userAdded: msg.member,
-				song: songLink,
-			};
-			data.currentSongStartTime = Math.floor((new Date()).getTime() / 1000);
-			this.handler.set(guildID, data);
-			// connection.once("error", (x) => console.trace(x));
-			// connection.once("disconnect",async ()=>{
-			// 	await this.removeQueue(guildID,"all");
-			// })
-			(connection ? connection : data.connection).once("end", async () => {
-				console.log("song ended", connection.ready);
-				if (!connection.ready) return data.channel.createMessage("Bot got kicked out!");
-				try {
-					data = this.handler.get(guildID);
-					data.skips = [];
-					//  = "";
-					if (data.loop) data.queue.push(data.currentsong);
-					data.currentsong = null;
-					if (data.queue.length > 0) {
-						let dq = data.queue.shift();
-						await this.queueSong(msg, dq.song, messageChannelBound, connection, false, dq.userAdded).catch(er => { });
-						this.handler.set(guildID, data);
-					} else {
-						data.channel.createMessage("Queue Finished!");
-						this.handler.delete(guildID);
-					}
-				} catch (error) {
-					console.trace(error, "Error");
-				}
+			let trial = 0;
+			let dataobj = this.handler.get(guildID);
+			dataobj.queue.unshift(songLink);
+			this.handler.set(guildID,dataobj);
+			while (this.handler.get(guildID).queue.length > 0){
+				dataobj = this.handler.get(guildID);
+				let song = 
+				let playcon = await this.play(msg,,msg.channel,connection,true);
+				let playFinished = await handleExceptionsAndRace(connection);
+				if (playFinished === "end"){
 
-			});
+				}else{
+					//error
+					if (trial < 5){
+						
+					}
+
+				}
+			}
+			data.channel.createMessage("Queue finished!");
+
 		} catch (er) { console.trace(er); }
 
 	}
@@ -214,7 +256,7 @@ class MusicHandler {
 
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
-		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime,`${data.currentsong.userAdded.nick || data.currentsong.userAdded.user.username}#${data.currentsong.userAdded.user.discriminator}`];
+		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime, `${data.currentsong.userAdded.nick || data.currentsong.userAdded.user.username}#${data.currentsong.userAdded.user.discriminator}`];
 	}
 	toggleLoop(guildID) {
 		let data = this.handler.get(guildID);
@@ -251,7 +293,7 @@ class MusicHandler {
 		let q = this.handler.get(guildID);
 		if (!q) return false;
 		q.queue = shuffle(q.queue);
-		this.handler.set(guildID,q);
+		this.handler.set(guildID, q);
 	}
 	async skipSong(guildID) {
 		this.handler.get(guildID).connection.stopPlaying();
