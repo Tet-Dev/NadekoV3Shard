@@ -89,7 +89,7 @@ const RarityColors = {
 // addtoArr(uberRareWeight.weight, "uber");
 // addtoArr(legendaryWeight.weight, "legendary");
 //Inits arrs
-async function UserUnlock(){
+async function UserUnlock(userId,itemName,){
 	
 }
 (() => {
