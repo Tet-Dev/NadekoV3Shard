@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 
 const ytdl = require("ytdl-core");
 const axios = require("axios");
@@ -28,9 +29,9 @@ function genID(length) {
 	}
 	return result;
 }
-let cp;
-let songqueue;
-let npMaps = new Map();
+// let cp;
+// let songqueue;
+// let npMaps = new Map();
 function getStreamInfo(stream) {
 	return new Promise((res, rej) => {
 		stream.on("info", (info) => res(info));
@@ -134,7 +135,7 @@ class MusicHandler {
 				});
 			}
 			if (!mem) mem = msg.member;
-			let dat2 = axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
+			axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
 				auth: this.bot.token,
 				queue: await Promise.all(data.queue.map(async x => await this.checkCacheFor(x.song))),
 				song: await this.checkCacheFor(songLink),
