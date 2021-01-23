@@ -115,7 +115,7 @@ class MusicHandler {
 				return;
 			}
 			let stream = ytdl(songLink, {
-				highWaterMark: 1024 * 1024,
+				highWaterMark: 1024 * 1024 * 1024,
 				quality: "highestaudio",
 				requestOptions: {
 					headers: {
@@ -165,12 +165,12 @@ class MusicHandler {
 			// })
 			(connection ? connection : data.connection).once("end", async () => {
 				console.log("song ended", connection.ready);
-				if (!connection.ready){
+				if (!connection.ready) {
 					this.handler.delete(guildID);
 					// return data.channel.createMessage();
 					stream.destroy();
 					this.handler.delete(guildID);
-				} 
+				}
 				stream.destroy();
 				try {
 					data = this.handler.get(guildID);
@@ -195,26 +195,26 @@ class MusicHandler {
 		} catch (er) { console.trace(er); }
 
 	}
-	pause(guildID){
+	pause(guildID) {
 		let data = this.handler.get(guildID);
 		// console.log(data+"Data");
-		if (data.paused){
+		if (data.paused) {
 			return false;
 		}
-		data.paused = Math.floor(Date.now()/1000);
+		data.paused = Math.floor(Date.now() / 1000);
 		data.connection.pause();
-		this.handler.set(guildID,data);
+		this.handler.set(guildID, data);
 		return true;
 	}
-	resume(guildID){
+	resume(guildID) {
 		let data = this.handler.get(guildID);
-		if (!data.paused){
+		if (!data.paused) {
 			return false;
 		}
-		data.currentSongStartTime = Math.floor(Date.now()/1000)-(data.paused-data.currentSongStartTime);
+		data.currentSongStartTime = Math.floor(Date.now() / 1000) - (data.paused - data.currentSongStartTime);
 		data.connection.resume();
 		data.paused = false;
-		this.handler.set(guildID,data);
+		this.handler.set(guildID, data);
 		return true;
 	}
 	async queueArray(guildID, songArr, connection, messageChannelBound, silentAdd) {
@@ -245,7 +245,7 @@ class MusicHandler {
 
 		let data = this.handler.get(guildID);
 		if (!data || !data.currentsong) return null;
-		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime,`${data.currentsong.userAdded.nick || data.currentsong.userAdded.user.username}#${data.currentsong.userAdded.user.discriminator}`];
+		return [await this.checkCacheFor(data.currentsong.song), data.currentSongStartTime, `${data.currentsong.userAdded.nick || data.currentsong.userAdded.user.username}#${data.currentsong.userAdded.user.discriminator}`];
 	}
 	toggleLoop(guildID) {
 		let data = this.handler.get(guildID);
@@ -271,7 +271,7 @@ class MusicHandler {
 			setTimeout(() => {
 				this.skipSong(guildID);
 			}, 500);
- 
+
 			return data.skips.length + " out of " + map.length + " would like to skip. Skipping...";
 		}
 		return data.skips.length + " out of " + map.length + " would like to skip. " + Math.ceil((map.length + 1) / 2) + " must agree to skip to skip!\n*Tip: Trying to Force-Skip a song? try `fs` instead!*";
@@ -282,7 +282,7 @@ class MusicHandler {
 		let q = this.handler.get(guildID);
 		if (!q) return false;
 		q.queue = shuffle(q.queue);
-		this.handler.set(guildID,q);
+		this.handler.set(guildID, q);
 		return true;
 	}
 	async skipSong(guildID) {
