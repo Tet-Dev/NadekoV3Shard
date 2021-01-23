@@ -33,7 +33,7 @@ module.exports = new GuildCommand({
 		})));
 		f.push({
 			name: "View all Permissions",
-			value: "[Click Me To View A List Of All Possible Permission Nodes]("
+			value: "[Click Me To View A List Of All Possible Permission Nodes](https://dazai.app/permissions)"
 		});
 		return {
 			embed: {

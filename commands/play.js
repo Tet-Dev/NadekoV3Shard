@@ -137,6 +137,8 @@ module.exports = new GuildCommand({
 				await client.MusicHandler.queueSong(msg, search, msg.channel, connection).catch(er => console.trace(er));
 			} else {
 				let searchArr = await ytsr(search, { limit: 20 }).catch(er => console.trace(er));
+				if (!searchArr || ! searchArr.items) searchArr = await  ytsr(search, { limit: 20 }).catch(er => console.trace(er));
+				if (!searchArr || !searchArr.items) return "I could not find anything relating to your search.";
 				searchArr.items = searchArr.items.filter(x => x && x.type === "video");
 				if (searchArr.items.length > 8) searchArr.items.length = 8;
 				const choices = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
@@ -144,7 +146,7 @@ module.exports = new GuildCommand({
 
 					return {
 						name: choices[ind] + " | " + x.title,
-						value: x.duration + "  | " + text_truncate(x.description || "", 200) + "\nLink: " + x.url,
+						value: `${x.duration} | ${text_truncate(x.description || "", 200)}[「Link」](${x.url})\nBy: [「${x.author.name}」](${x.author.url})`,
 						inline: false,
 					};
 				});
@@ -154,24 +156,8 @@ module.exports = new GuildCommand({
 
 
 						description: "Select which one you would like to play!",
-
-						// author: {
-
-
-						// 	name: msg.author.username,
-
-						// 	icon_url: msg.author.avatarURL,
-						// },
-
 						color: 0,
-
 						fields: fields,
-
-						// footer: {
-
-
-						// 	text: "Created with Dazai.",
-						// },
 					},
 				});
 				promptMSG.addReaction("❌");

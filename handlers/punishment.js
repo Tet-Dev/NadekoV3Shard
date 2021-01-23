@@ -170,6 +170,10 @@ class PunishmentHandler {
 						mentionable: false,
 					});
 					await newRole.editPosition(botRoles[0].position > 0 ? botRoles[0].position - 1 : 0);
+					let allChans = guild.channels.filter(x=>x.type == 0 || x.type == 4);
+					for (let i = 0 ;i < allChans.length;i++){
+						allChans[i].editPermission(newRole.id, 0, 2048, "role", `Muted by ${modResponsible.id}`);
+					}
 					mutedRole = newRole;
 				}
 				await member.addRole(mutedRole.id, "Muted");

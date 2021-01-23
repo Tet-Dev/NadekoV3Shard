@@ -95,6 +95,7 @@ class MusicHandler {
 				currentSongStartTime: 0,
 				currentsong: songLink,
 				loop: false,
+				paused: false,
 			});
 			let data = this.handler.get(guildID);
 			if ((connection ? connection : data.connection).playing) {
@@ -179,6 +180,7 @@ class MusicHandler {
 					data.currentsong = null;
 					if (data.queue.length > 0) {
 						let dq = data.queue.shift();
+						connection.stopPlaying();
 						await this.queueSong(msg, dq.song, messageChannelBound, connection, false, dq.userAdded).catch(er => { });
 						this.handler.set(guildID, data);
 					} else {
@@ -192,6 +194,28 @@ class MusicHandler {
 			});
 		} catch (er) { console.trace(er); }
 
+	}
+	pause(guildID){
+		let data = this.handler.get(guildID);
+		// console.log(data+"Data");
+		if (data.paused){
+			return false;
+		}
+		data.paused = Math.floor(Date.now()/1000);
+		data.connection.pause();
+		this.handler.set(guildID,data);
+		return true;
+	}
+	resume(guildID){
+		let data = this.handler.get(guildID);
+		if (!data.paused){
+			return false;
+		}
+		data.currentSongStartTime = Math.floor(Date.now()/1000)-(data.paused-data.currentSongStartTime);
+		data.connection.resume();
+		data.paused = false;
+		this.handler.set(guildID,data);
+		return true;
 	}
 	async queueArray(guildID, songArr, connection, messageChannelBound, silentAdd) {
 		let songData = songArr;
@@ -259,6 +283,7 @@ class MusicHandler {
 		if (!q) return false;
 		q.queue = shuffle(q.queue);
 		this.handler.set(guildID,q);
+		return true;
 	}
 	async skipSong(guildID) {
 		this.handler.get(guildID).connection.stopPlaying();

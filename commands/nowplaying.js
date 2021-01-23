@@ -58,7 +58,7 @@ module.exports = new GuildCommand({
 				whom: dat[2],
 			}).catch(er=>{});
 		} catch (error) {
-			msg.channel.createMessage("Are you 100% sure something's playing right now?");
+			return "It doesn't seem like anything's playing!";
 		}
 		
 		// console.log(dat2.data,dat2.status)

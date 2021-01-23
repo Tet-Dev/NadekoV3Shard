@@ -1,11 +1,11 @@
 let base = {
-	dj: ["skipSong", "forceDC"],
+	dj: ["skipSong", "forceDC","shuffle","pauseMusic","resumeMusic"],
 	mod: ["purgeMessages", "mute", "nickLock", "nickLockClear", "unmute", "uwuspeak", "warnUser", "removeWarn","export"],
 	extraRole: [],
 	extraRole2: [],
 	everyone: ["playSong", "viewWarns","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","flushify"]
 };
-let allPerms = ["skipSong","purgeMessages","mute","uwuspeak","disablecmd","nickLock","nickLockClear","reactionRoleCreate","reactionRoleRemove","warnUser","removeWarn","createRedditSub","clearRedditSub","unmute","viewWarns","forceDC","playSong","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","ripEmote","flushify","export"];
+let allPerms = ["skipSong","purgeMessages","mute","uwuspeak","disablecmd","nickLock","nickLockClear","reactionRoleCreate","reactionRoleRemove","warnUser","removeWarn","createRedditSub","clearRedditSub","unmute","viewWarns","forceDC","playSong","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","ripEmote","flushify","export","pauseMusic","resumeMusic","shuffle"];
 let bot;
 class PermissionsHandler {
 
@@ -23,10 +23,12 @@ class PermissionsHandler {
 		if (!data) return false;
 		if (data.adminRole && mem.roles.filter(x => x === data.adminRole).length == 1) return true;
 		let hasRole = "everyone";
-		if (data.djRole && mem.roles.filter(x => x === data.adminRole).length == 1) hasRole = "dj";
-		if (data.extraRole && mem.roles.filter(x => x === data.adminRole).length == 1) hasRole = "extraRole2";
-		if (data.modRole && mem.roles.filter(x => x === data.adminRole).length == 1) hasRole = "mod";
-		if (data.extraRole2 && mem.roles.filter(x => x === data.adminRole).length == 1) hasRole = "extraRole2";
+		// console.log(mem.roles,data.modRole);
+		if (data.djRole && mem.roles.includes(data.djRole)) hasRole = "dj";
+		if (data.extraRole && mem.roles.includes(data.extraRole)) hasRole = "extraRole2";
+		if (data.modRole && mem.roles.includes(data.modRole)) hasRole = "modRole";
+		if (data.extraRole2 && mem.roles.includes(data.extraRole2)) hasRole = "extraRole2";
+		console.log(hasRole);
 		let inherits = {
 			everyone: (data.everyonePerms ? data.everyonePerms.split(",") : base.everyone).includes(permName),
 			dj: (data.djRolePerms ? data.djRolePerms.split(",") : base.dj).includes(permName),
@@ -34,7 +36,7 @@ class PermissionsHandler {
 			modRole: (data.modRolePerms ? data.modRolePerms.split(",") : base.mod).includes(permName),
 			extraRole2: (data.extraRole2Perms ? data.extraRole2Perms.split(",") : base.extraRole2).includes(permName),
 		};
-
+		
 		switch (hasRole) {
 		case "dj":
 
@@ -43,6 +45,7 @@ class PermissionsHandler {
 			return inherits.extraRole || inherits.dj || inherits.everyone;
 
 		case "modRole":
+			console.log("has mod!");
 			return inherits.modRole || inherits.extraRole || inherits.dj || inherits.everyone;
 
 		case "extraRole2":

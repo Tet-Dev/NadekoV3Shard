@@ -46,7 +46,7 @@ module.exports = new GuildCommand({
 		let men = params.shift();
 		let user = await client.getRESTGuildMember(msg.guildID,men.replace(/[<>@!]/g,""));
 		let time = params.shift();
-		time = secondsFromDhms(time?time:3600);
+		time = secondsFromDhms(time?time:"3600s");
 		if (!user) return " User ID/Mention does not exist! Mentioned User's id: "+men.replace(/[<>@!]/g,"");
 		let res = await client.PunishmentHandler.addPunishment(msg.member.guild,user,"mute",time*1000,params.join(" ") || "Unspecified",msg.author);
 		if (res) {

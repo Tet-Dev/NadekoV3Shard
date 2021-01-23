@@ -19,6 +19,7 @@ module.exports = new SettingCommand({
 		if (!await bot.permissionsHandler.checkForPerm(msg.member,"administrator")) return "You are Lacking Administrator Perms!";
 
 		if (params[0].toLowerCase() === "none"){
+			await bot.SQLHandler.updateGuild(msg.guildID,{ everyonePerms: "" });
 			return "Base permissions have been reset to the default!";
 		}
 		let arrs = params.join(",").split(",").filter(x=>x);
