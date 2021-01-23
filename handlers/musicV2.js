@@ -163,7 +163,13 @@ class MusicHandler {
 			// })
 			(connection ? connection : data.connection).once("end", async () => {
 				console.log("song ended", connection.ready);
-				if (!connection.ready) return data.channel.createMessage("Bot got kicked out!");
+				if (!connection.ready){
+					this.handler.delete(guildID);
+					// return data.channel.createMessage();
+					stream.destroy();
+					this.handler.delete(guildID);
+				} 
+				stream.destroy();
 				try {
 					data = this.handler.get(guildID);
 					data.skips = [];
@@ -240,7 +246,7 @@ class MusicHandler {
 			setTimeout(() => {
 				this.skipSong(guildID);
 			}, 500);
-
+ 
 			return data.skips.length + " out of " + map.length + " would like to skip. Skipping...";
 		}
 		return data.skips.length + " out of " + map.length + " would like to skip. " + Math.ceil((map.length + 1) / 2) + " must agree to skip to skip!\n*Tip: Trying to Force-Skip a song? try `fs` instead!*";
@@ -270,7 +276,7 @@ class MusicHandler {
 		return queue.map((x, ind) => {
 			return {
 				"name": x.title || "UNKNOWN",
-				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}(【。】)[${data.queue[ind].song}]`
+				"value": `#${ind + 1} 《 Duration 「${SecsToFormat((x.lengthSeconds || 0) + "")}」》Requested by: ${(data.queue[ind].userAdded.nick || data.queue[ind].userAdded.user.username)}#${data.queue[ind].userAdded.user.discriminator}[【。】](${data.queue[ind].song})`
 			};
 
 		}).filter(x => x);

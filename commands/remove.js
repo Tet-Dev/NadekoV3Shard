@@ -3,11 +3,12 @@ module.exports = new GuildCommand({
 	name: "remove", // name of command
 	description: "Removes a song based on the index or \"all\" to purge the queue",
 	run: (async (client, { msg, params }) => {
+		if (params[0].toLowerCase !== "all" && params[0].)
 		let resp = await client.MusicHandler.removeQueue(msg.guildID,params[0]);
 		if (params[0].toLowerCase() === "all"){
 			client.createMessage(msg.channel.id,"Removed all items from queue.");
 		}else{
-			msg.channel.createMessage("Removed `"+resp.videoDetails.title+ "` from the queue");
+			msg.channel.createMessage("Removed `"+resp.title+ "` from the queue");
 		}
 	}),
 	options:{
