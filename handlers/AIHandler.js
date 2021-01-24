@@ -42,11 +42,12 @@ class AIManager {
 		while (true) {
 			while (queue.length == 0) await sleep(10);
 			let comment = queue.shift();
+			// comment.data
 			try {
 			
 				const analyzeRequest = {
 					comment: {
-						text: comment.data,
+						text: comment.data.content,
 					},
 					requestedAttributes: {
 						TOXICITY: {},
@@ -63,7 +64,7 @@ class AIManager {
 				comment.resfunc(res);
 				await sleep(250);
 			} catch (error) {
-				console.trace(error);
+				// console.trace(error);
 				comment.rej(error);
 			}
 
@@ -74,7 +75,8 @@ class AIManager {
 		return new Promise((res,rej)=>{
 			
 			queue.push({
-				data: msg.content,
+				data: msg,
+				
 				resfunc: res,
 				rej:rej
 			});
