@@ -116,7 +116,7 @@ class MusicHandler {
 			}
 			let stream = ytdl(songLink, {
 				highWaterMark: 1024 * 1024 * 1024,
-				quality: "audioonly",
+				quality: "audio",
 				requestOptions: {
 					headers: {
 						cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
