@@ -99,7 +99,7 @@ class MusicHandler {
 			});
 			let data = this.handler.get(guildID);
 			if ((connection ? connection : data.connection).playing) {
-				let info = await this.checkCacheFor(songLink).catch(er => { });
+				let info = await this.checkCacheFor(songLixk).catch(er => { });
 				if (!info) {
 					return false;
 				}
@@ -116,7 +116,7 @@ class MusicHandler {
 			}
 			let stream = ytdl(songLink, {
 				highWaterMark: 1024 * 1024 * 1024,
-				quality: "highestaudio",
+				quality: "audioonly",
 				requestOptions: {
 					headers: {
 						cookie: this.bot.ytCookies[Math.round(Math.random() * 100) % this.bot.ytCookies.length],
