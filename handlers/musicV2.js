@@ -99,7 +99,7 @@ class MusicHandler {
 			});
 			let data = this.handler.get(guildID);
 			if ((connection ? connection : data.connection).playing) {
-				let info = await this.checkCacheFor(songLixk).catch(er => { });
+				let info = await this.checkCacheFor(songLink).catch(er => { });
 				if (!info) {
 					return false;
 				}
