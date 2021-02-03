@@ -11,6 +11,23 @@ function text_truncate(str, len) {
 	array.length = len - 3;
 	return array.join("") + "...";
 }
+function SecsToFormat(string) {
+	var sec_num = parseInt(string, 10);
+	var hours = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - hours * 3600) / 60);
+	var seconds = sec_num - hours * 3600 - minutes * 60;
+
+	if (hours < 10) {
+		hours = "0" + hours;
+	}
+	if (minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	if (seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	return hours + ":" + minutes + ":" + seconds;
+}
 function getChoice(client,msg, userid) {
 	return new Promise(async (res, rej) => {
 		let filter = (m, emoji, userID) => userID === userid;
@@ -120,33 +137,29 @@ module.exports = new GuildCommand({
 			} else if (search.includes("list=")) {
 				// DazaiMsg(msg.channel.id, "Sorry! Playlists are Disabled atm!")
 				// return
-
-
-
-				const connection = await client.joinVoiceChannel(
-					msg.member.voiceState.channelID
-				);
-				let res = await ytpl(search.split("list=")[1].split("&")[0]);
-				client.MusicHandler.queueArray(msg, res.items, connection, msg.channel, true);
+				let resTrack= await client.MusicHandler.resolveTrack(search);
+				let resthing = await client.MusicHandler.queueArray(msg,resTrack.tracks);
+				if (resthing)
+					msg.channel.createMessage(resthing);
 			} else if (search.split("https://www\.youtube\.com/watch?").length > 1 || search.includes("https://youtu.be/")) {
-				console.log("Joining");
-				const connection = await client.joinVoiceChannel(
-					msg.member.voiceState.channelID
-				);
-				console.log("joined!");
-				await client.MusicHandler.queueSong(msg, search, msg.channel, connection).catch(er => console.trace(er));
-			} else {
-				let searchArr = await ytsr(search, { limit: 20 }).catch(er => console.trace(er));
-				if (!searchArr || ! searchArr.items) searchArr = await  ytsr(search, { limit: 20 }).catch(er => console.trace(er));
-				if (!searchArr || !searchArr.items) return "I could not find anything relating to your search.";
-				searchArr.items = searchArr.items.filter(x => x && x.type === "video");
-				if (searchArr.items.length > 8) searchArr.items.length = 8;
+				let resTrack= await client.MusicHandler.resolveTrack(search);
+				// await client.MusicHandler.s(msg,resTrack.tracks);
+				let resthing = await client.MusicHandler.queueSong(msg,resTrack.tracks[0]).catch(er => console.trace(er));
+				if (resthing)
+					msg.channel.createMessage(resthing);
+				
+			}else {
+				let searchArr = await client.MusicHandler.getTracksFromSearch(search);//, { limit: 20 }).catch(er => console.trace(er));
+				// if (!searchArr || ! searchArr.items) searchArr = await  ytsr(search, { limit: 20 }).catch(er => console.trace(er));
+				// if (!searchArr || !searchArr.items) return "I could not find anything relating to your search.";
+				// searchArr.items = searchArr.items.filter(x => x && x.type === "video");
+				if (searchArr.tracks.length > 8) searchArr.tracks.length = 8;
 				const choices = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
-				let fields = searchArr.items.map((x, ind) => {
+				let fields = searchArr.tracks.map((x, ind) => {
 
 					return {
-						name: choices[ind] + " | " + x.title,
-						value: `${x.duration} | ${text_truncate(x.description || "", 200)}[「Link」](${x.url})\nBy: [「${x.author.name}」](${x.author.url})`,
+						name: choices[ind] + " | " + x.info.title,
+						value: `${SecsToFormat(Math.round(x.info.length/1000))} | [「Link」](${x.info.uri})\nBy: 《${x.info.author}》`,
 						inline: false,
 					};
 				});
@@ -181,10 +194,9 @@ module.exports = new GuildCommand({
 				if (choice.name === "❌") promptMSG.delete();
 				for (var i = 0; i < choices.length; i++) {
 					if (choice.name === choices[i]) {
-						const connection = await client.joinVoiceChannel(
-							msg.member.voiceState.channelID
-						);
-						await client.MusicHandler.queueSong(msg, searchArr.items[i].url, msg.channel, connection);
+						let resthing = await client.MusicHandler.queueSong(msg, searchArr.tracks[i],);
+						if (resthing)
+							msg.channel.createMessage(resthing);
 						promptMSG.delete();
 						break;
 					}

@@ -25,7 +25,7 @@ module.exports = new DiscordEvent({
 			else { chan.edit({ userLimit: chan.voiceMembers.size }); }
 		}
 		setTimeout(async () => {
-			if (chan.voiceMembers.filter(x=>!x.bot).length == 0) bot.leaveVoiceChannel(chan.id);
+			if (chan.voiceMembers.filter(x=>!x.bot).length == 0) bot.MusicHandler.stop(chan.guild.id);
 		}, 60000);
 	}
 });

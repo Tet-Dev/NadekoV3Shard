@@ -2,7 +2,7 @@
 const { DataClient } = require("eris-boiler");
 const path = require("path");
 const { join } = path;
-const MusicHandler = require("./handlers/musicV2.js");
+const MusicHandler = require("./handlers/musicV3.js");
 const SQLHandler = require("./handlers/SQLCommunicator");
 const requestAPI = require("request");
 var SpotifyWebApi = require("spotify-web-api-node");
@@ -26,7 +26,7 @@ const RankCardHandler = require("./handlers/RankCards");
 const ConvoHandler = require("./handlers/convoHandler");
 const fetch = require("node-fetch");
 const { color } = require("jimp");
-const { default: Axios } = require("axios");
+	const { default: Axios } = require("axios");
 const spotifyApi = new SpotifyWebApi({
 	clientId: "21ecf39ff60a471189d5411c37182e31",
 	clientSecret: process.env.SPOTIFY_SECRET,
@@ -317,7 +317,7 @@ bot.ColorMap = ColorMap;
 bot.shopOffers = shopOffers;
 bot.SQLHandler = new SQLHandler(bot);
 console.log(MusicHandler);
-bot.MusicHandler = new MusicHandler(bot);
+
 bot.permissionsHandler = new PermissionsHandler(bot.SQLHandler, bot);
 bot.EconomyHandler = new EconomyHandler(bot);
 bot.LevellingHandler = new LevellingHandler(bot);
@@ -369,9 +369,12 @@ bot
 	.addCommands(join(__dirname, "commands")) // load commands in commands folder
 	.addEvents(join(__dirname, "events")) // load events in events folder
 	.connect();
+
+
 bot.on("ready", async () => {
 	//
 	//
+	bot.MusicHandler = new MusicHandler(bot);
 	const commandsBlacklist = ["eval", "reboot"];
 	let commands = [];
 
@@ -434,7 +437,7 @@ server.listen(3000);
 console.log("Server is Ready!");
 module.exports = ()=>{ server.listen(3000, ()=>{console.log("Server is Ready!");});
 
-e};
+};
 // const nodeUtil = require('util');
 // if (!process.env.APIAUTH){
 // 	console.log = async (...data) => {

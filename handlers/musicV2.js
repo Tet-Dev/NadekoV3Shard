@@ -115,7 +115,7 @@ class MusicHandler {
 				return;
 			}
 			let stream = ytdl(songLink, {
-				highWaterMark: 1024 * 1024 * 1024,
+				highWaterMark: 1024 * 1024 * 1024,o
 				quality: "highestaudio",
 				requestOptions: {
 					headers: {
@@ -166,10 +166,11 @@ class MusicHandler {
 			(connection ? connection : data.connection).once("end", async () => {
 				console.log("song ended", connection.ready);
 				if (!connection.ready) {
-					this.handler.delete(guildID);
+					// this.handler.delete(guildID);
 					// return data.channel.createMessage();
-					stream.destroy();
-					this.handler.delete(guildID);
+					// connection = await this.bot.joinVoiceChannel()
+					// stream.destroy();
+					// this.handler.delete(guildID);
 				}
 				stream.destroy();
 				try {

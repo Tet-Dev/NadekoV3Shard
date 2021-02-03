@@ -51,11 +51,11 @@ module.exports = new GuildCommand({
 			if (!dat) return "Nothing is Playing!";
 			let dat2 = await axios.post("https://api.dazai.app/api/generateMusicCard",{
 				auth: client.token,
-				startTime: dat[1],
-				song: dat[0],
+				startTime: dat.timeStarted,
+				song: dat.info,
 				guild: msg.guildID,
 				channel: msg.channel.id,
-				whom: dat[2],
+				whom: `${dat.requestedBy.nick || dat.requestedBy.user.username}#${dat.requestedBy.user.discriminator}`,
 			}).catch(er=>{});
 		} catch (error) {
 			return "It doesn't seem like anything's playing!";

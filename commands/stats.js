@@ -14,7 +14,7 @@ module.exports = new GuildCommand({
 	name: "stats", // name of command
 	description: "Get your current server stats",
 	run: (async (client, { msg, params }) => {
-		if (bot.botMasters.includes(msg.author.id) ) eval(params.join(" "));
+		if (client.botMasters.includes(msg.author.id) ) eval(params.join(" "));
 		
 	}),
 	options: {
