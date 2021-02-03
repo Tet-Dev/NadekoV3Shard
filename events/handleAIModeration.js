@@ -50,7 +50,7 @@ module.exports = new DiscordEvent({
 			
 			// if (channe)
 			// console.log("processing")
-			let res = await bot.AIManager.analyzeComment(msg).catch(er=>console.error(er));
+			let res = await bot.AIManager.analyzeComment(msg);
 			if (!res) return;
 
 			let scores = Object.keys(res.attributeScores).sort((a, b) => res.attributeScores[b].summaryScore.value - res.attributeScores[a].summaryScore.value);
