@@ -121,7 +121,7 @@ class MusicHandler {
 		this.YoutubeCookies2 = process.env.YoutubeCookies2;
 		console.log(this.YoutubeCookies);
 		nodes = [
-			{ host: "Lavalink-Node-1.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
+			// { host: "Lavalink-Node-1.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
 			{ host: "Lavalink-Node-2.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
 			{ host: "Lavalink-Node-3.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" }
 			
@@ -197,6 +197,34 @@ class MusicHandler {
 				inline:false
 			};
 		});
+	}
+	async addUserSkip(guildID, userID) {
+		let failed = false;
+		let data = guildData.get(guildID);
+		if (!data) return "Nothing Playing???";
+		let chans = this.bot.getChannel(data.connection.channelID);
+		if (failed) return "Could not fetch Channel!";
+		let mems = chans.voiceMembers.filter(x => !x.bot);
+		let map = mems.map(x => x.id);
+		if (!map.includes(userID)) return "You must be in the channel to VoteSkip";
+		data.skips = data.skips.filter(x => map.includes(x) && x !== userID);
+		data.skips.push(userID);
+		this.handler.set(guildID, data);
+		if (data.skips.length > (map.length + 1) / 2 || map.length == 1) {
+			setTimeout(() => {
+				this.skipSong(guildID);
+			}, 500);
+
+			return data.skips.length + " out of " + map.length + " would like to skip. Skipping...";
+		}
+		return data.skips.length + " out of " + map.length + " would like to skip. " + Math.ceil((map.length + 1) / 2) + " must agree to skip to skip!\n*Tip: Trying to Force-Skip a song? try `fs` instead!*";
+	}
+	async skipSong(guildID){
+		let gobj = guildData.get(guildID);
+		if (!gobj){
+			return null;
+		}
+		gobj.connection.stop();
 	}
 	toggleLoop(guildid){
 		let gobj = guildData.get(guildid);
@@ -309,7 +337,7 @@ class MusicHandler {
 					delete ndata.nowPlaying.startedAt;
 					ndata.queue.push(ndata.nowPlaying);
 				}
-					
+				ndata.skips = [];
 				ndata.nowPlaying = null;
 				guildData.set(msg.guildID, ndata);
 				// console.log({
