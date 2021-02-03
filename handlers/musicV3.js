@@ -121,7 +121,10 @@ class MusicHandler {
 		this.YoutubeCookies2 = process.env.YoutubeCookies2;
 		console.log(this.YoutubeCookies);
 		nodes = [
-			{ host: "Lavalink-Node-1.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" }
+			{ host: "Lavalink-Node-1.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
+			{ host: "Lavalink-Node-2.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
+			{ host: "Lavalink-Node-3.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" }
+			
 		];
 
 		regions = {
