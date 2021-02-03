@@ -21,6 +21,8 @@ module.exports = new GuildCommand({
 		let channelID = msg.member.voiceState.channelID;
 		if (channelID) {
 			let a = client.MusicHandler.toggleLoop(msg.guildID);
+			if (a === null)
+				return "Nothing is playing, hence looping cannot be toggled";
 			return `Looping Playlist is now \`${a? "ON":"OFF"}\``;
 		} else {
 			return "You are not in a vc!";

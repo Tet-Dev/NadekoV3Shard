@@ -195,7 +195,7 @@ class MusicHandler {
 			};
 		});
 	}
-	async toggleLoop(guildid){
+	toggleLoop(guildid){
 		let gobj = guildData.get(guildid);
 		if (!gobj){
 			return null;
@@ -210,7 +210,7 @@ class MusicHandler {
 			return null;
 		}
 		gobj.connection.stop();
-		client.leave(guildid);
+		client.leaveVoiceChannel(gobj.connection.channelId);
 		guildData.delete(guildid);
 		return true;
 	}
