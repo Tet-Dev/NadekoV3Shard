@@ -36,7 +36,7 @@ module.exports = new DiscordEvent({
 	run: async (bot, msg) => {
 		if (!msg.guildID || !(await bot.SQLHandler.getGuild(msg.guildID)).whoping)
 			return;
-		if (msg.content.match(/who pinged/g) && msg.content.length < 25) {
+		if ((msg.content.match(/who pinged/g) || msg.content.toLowerCase() === "who ping") && msg.content.length < 25) {
 			msg.channel.sendTyping();
 			let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
 			allMessages = allMessages.filter(x=>x.mentions.includes(msg.author));
