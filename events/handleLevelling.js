@@ -54,14 +54,14 @@ module.exports = new DiscordEvent({
 			if (guild.levelmsgs !== "none"){
 				//Inject vars
 				let lmsg = guild.levelmsgs || "Congrats 🎉 {MENTION}, You levelled up from {OLDLVL} to {NEWLVL}.";
-				lmsg = lmsg.replace(/{MENTION}/g, msg.author.mention).replace(/{OLDLVL}/g, (res-1)).replace(/{NEWLVL}/g, (res) + "").replace(/{USERNAME}/g, msg.author.username).replace(/{ID}/g, msg.author.id);
+				lmsg = lmsg.replace(/{MENTION}/g, msg.author.mention).replace(/{OLDLVL}/g, (res.oldlvl)).replace(/{NEWLVL}/g, (res.newlvl) + "").replace(/{USERNAME}/g, msg.author.username).replace(/{ID}/g, msg.author.id);
 				while (cooldownMaps.get(msg.author.id)+60 < (Date.now()/1000)){
 					await sleep(60000);
 				}
 				let dmchan = await bot.getDMChannel(msg.author.id);
 				await bot.createMessage(guild.levelmsgchan && guild.levelmsgchan !== "none"? guild.levelmsgchan:dmchan.id,lmsg);
 				let parseLvl = parseLevelRewards(guild.levelrewards);
-				let awards = parseLvl.filter(x=>x.level == res).map(x=>x.roleID);
+				let awards = parseLvl.filter(x=>x.level == res.newlvl).map(x=>x.roleID);
 				let dmChannel = await bot.getDMChannel(msg.author.id);
 				awards.forEach(async (role) => {
 					if (role === "none" || !role) return;
@@ -73,7 +73,7 @@ module.exports = new DiscordEvent({
 					msg.member.addRole(role,"Levelup Reward");
 				});
 				if (!guild.keepRolesWhenLevel && awards.length){
-					parseLvl.filter(x=>x.level < res).map(x=>x.roleID).filter(x=>msg.member.roles.includes(x)).forEach(async (role)=>{
+					parseLvl.filter(x=>x.level < res.newlvl).map(x=>x.roleID).filter(x=>msg.member.roles.includes(x)).forEach(async (role)=>{
 						if (role === "none" || !role) return;
 						let getRole = await msg.member.guild.roles.filter(x=>x.id === role);
 						if (getRole.length == 0) return;
@@ -85,7 +85,7 @@ module.exports = new DiscordEvent({
 					});
 				}
 				let pardeDLvl  = parseLevelRewards(guild.levelremoves);
-				let delvlrewards = pardeDLvl.filter(x=>x.level == res).map(x=>x.roleID);
+				let delvlrewards = pardeDLvl.filter(x=>x.level == res.newlvl).map(x=>x.roleID);
 				delvlrewards.forEach(async (role)=>{
 					if (role === "none" || !role) return;
 					let getRole = await msg.member.guild.roles.filter(x=>x.id === role);

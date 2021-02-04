@@ -144,6 +144,7 @@ class LevellingHandler {
 		let level = await lvldata.level;
 		let newexp = exp + amnt;
 		let lvlup = false;
+		
 		let levelup = Math.round(100 * level ** 1.3);
 		while (newexp >= levelup){
 			lvlup = true;
@@ -155,7 +156,10 @@ class LevellingHandler {
 			exp: newexp,
 			level: level
 		});
-		return lvlup? level:false;
+		return lvlup? {
+			newlvl:level,
+			oldlvl: lvldata.level}
+			:false;
 	}
 	async getUserCurve(userid, guildid, getInArr) {
 		let res = await sqlConnection.query("SELECT * FROM nadekoguilddata.levellingcurve WHERE userguildid = '" + guildid + "§" + userid + "'");
