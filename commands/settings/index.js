@@ -11,6 +11,7 @@ const levelRewards = require("./levelRewards");
 const keeproleswhenlevel = require("./keepRolesWhenLevel");
 const messageEvents = require("./messageEvents");
 const betaMode = require("./betaMode");
+const whoping = require("./whoping");
 module.exports = new GuildCommand({
 	name: "settings",
 	description: "Change some settings for your server :)",
@@ -26,6 +27,7 @@ module.exports = new GuildCommand({
 			levelRewards,
 			messageEvents,
 			betaMode,
+			whoping,
 		]
 	},
 	run: async function (bot, context) {

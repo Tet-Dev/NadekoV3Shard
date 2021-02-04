@@ -39,31 +39,34 @@ module.exports = new DiscordEvent({
 		if (msg.content.match(/who pinged/g) && msg.content.length < 25) {
 			msg.channel.sendTyping();
 			let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
+			allMessages = allMessages.filter(x=>x.mentions.includes(msg.author));
 			if (allMessages.length > 1) {
 				await msg.channel.createMessage({
-					content: `I found ${allMessages.length} pings from your last message!`,
+					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found ${allMessages.length} pings from your last message!`,
 					embed: {
 						title: "Pings",
-						description: allMessages.map((x, ind) => {
-							return {
-								name: `Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`
-							};
-						}).join("\n")
-					}
+						description: allMessages.map((x, ind) =>
+							`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`).join("\n")
+					},
+					// message_reference: msg.id
 				});
 			} else if (allMessages.length == 1) {
 				await msg.channel.createMessage({
-					content: `1 Ping from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
+					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found 1 Ping from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
 					embed: {
-						title: "Click me to Jump",
-						description: allMessages[0].content,
+						// title: "Click me to Jump",
+						description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
 						author: {
 							name: `${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
 							url: allMessages[0].author.dynamicAvatarURL("png", 128),
 						},
-						url: `https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
-					}
+						// url: ``,
+					},
+					// message_reference: msg.id
 				});
+			} else {
+				await msg.channel.createMessage({
+					content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. It was either over 400 messages ago or it was deleted.`});
 			}
 			await msg.channel.createMessage("If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix");
 		}
