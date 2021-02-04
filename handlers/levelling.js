@@ -144,12 +144,12 @@ class LevellingHandler {
 		let level = await lvldata.level;
 		let newexp = exp + amnt;
 		let lvlup = false;
-		const levelup = Math.round(100 * level ** 1.3);
-		if (newexp >= levelup){
+		let levelup = Math.round(100 * level ** 1.3);
+		while (newexp >= levelup){
 			lvlup = true;
+			levelup = Math.round(100 * level ** 1.3);
 			newexp -= levelup;
 			level++;
-
 		}
 		await this.updateUserXP(userid,guildid,{
 			exp: newexp,
