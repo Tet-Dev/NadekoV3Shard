@@ -4,6 +4,7 @@ const axios = require("axios");
 const fs = require("fs");
 const { all } = require("mathjs");
 const { url } = require("inspector");
+const EmbedPaginator = require("eris-pagination");
 // const { boltzmannDependencies } = require("mathjs");
 // const { nuclearMagnetonDependencies } = require("mathjs");
 // const { logger } = require("../util");
@@ -34,45 +35,65 @@ const httpRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/
 module.exports = new DiscordEvent({
 	name: "messageCreate",
 	run: async (bot, msg) => {
-		if (!msg.guildID || !(await bot.SQLHandler.getGuild(msg.guildID)).whoping)
-			return;
-		if ((msg.content.match(/who pinged/g) || msg.content.toLowerCase() === "who ping") && msg.content.length < 25) {
-			msg.channel.sendTyping();
-			let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
-			allMessages = allMessages.filter(x=>x.mentions.includes(msg.author));
-			allMessages.length = 25;
-			if (allMessages.length > 1) {
-				await msg.channel.createMessage({
-					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found ${allMessages.length} pings from your last message!`,
-					embed: {
-						title: "Pings from the last 400 messages :) ",
-						description: allMessages.map((x, ind) =>
-							`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`).join("\n")
-					},
-					// message_reference: msg.id
-				});
-			} else if (allMessages.length == 1) {
-				await msg.channel.createMessage({
-					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found 1 Ping from the last 400 messages from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
-					embed: {
-						// title: "Click me to Jump",
-						description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
-						author: {
-							name: `${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
-							icon_url: allMessages[0].author.dynamicAvatarURL("png", 128),
+		try {
+			if (!msg.guildID || !(await bot.SQLHandler.getGuild(msg.guildID)).whoping)
+				return;
+			if ((msg.content.match(/who pinged/g) || msg.content.toLowerCase() === "who ping") && msg.content.length < 25) {
+				msg.channel.sendTyping();
+				let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
+				allMessages = allMessages.filter(x => x.mentions.includes(msg.author));
+				let chunkedMessages = allMessages.chunk_inefficient((allMessages.length >= 11 ? 10 : allMessages.length));
+				if (allMessages.length > 1) {
+					let pagi = chunkedMessages.map(group=>{
+						return {
+							title: "Pings from the last 400 messages :) ",
+							description: group.map((x, ind) =>
+								`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`).join("\n")
+						};
+					});
+					await msg.channel.createMessage({
+						content: `Most Recent Ping`,
+						embed: {
+							// title: "Click me to Jump",
+							description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
+							author: {
+								name: `${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
+								icon_url: allMessages[0].author.dynamicAvatarURL("png", 128),
+							},
+							// url: ``,
 						},
-						// url: ``,
-					},
-					// message_reference: msg.id
-				});
-			} else {
-				await msg.channel.createMessage({
-					content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. Could it have been deleted?`});
+						// message_reference: msg.id
+					}); 
+					const paginatedEmbed = await EmbedPaginator.createPaginationEmbed(msg, pagi);
+					
+				} else if (allMessages.length == 1) {
+					await msg.channel.createMessage({
+						content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found 1 Ping from the last 400 messages from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
+						embed: {
+							// title: "Click me to Jump",
+							description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
+							author: {
+								name: `${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
+								icon_url: allMessages[0].author.dynamicAvatarURL("png", 128),
+							},
+							// url: ``,
+						},
+						// message_reference: msg.id
+					});
+				} else {
+					await msg.channel.createMessage({
+						content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. Could it have been deleted?`
+					});
+				}
+				await msg.channel.createMessage("*If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix*");
 			}
-			await msg.channel.createMessage("*If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix*");
+		} catch (error) {
+			console.error(error);
 		}
-		// lastMsgMaps.set(msg.author.id, msg.id);
 
 	}
+	// lastMsgMaps.set(msg.author.id, msg.id);
+
+
 });
 
