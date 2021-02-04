@@ -93,7 +93,7 @@ function getPlayer(channel) {
 }
 async function resolveTracks(node, search) {
 	// try {
-	const result = await superagent.get(`https://${node.host}:443/loadtracks?identifier=${search}`)
+	const result = await superagent.get(`http://${node.host}:2333/loadtracks?identifier=${search}`)
 		.set("Authorization", node.password)
 		.set("Accept", "application/json");
 	// } catch (err) {
