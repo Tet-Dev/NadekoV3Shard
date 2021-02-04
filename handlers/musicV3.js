@@ -294,7 +294,7 @@ class MusicHandler {
 			data.queue = [];
 
 		} else {
-			pop = await this.checkCacheFor(data.queue.splice(ind - 1, 1)[0].song).catch(er => { });
+			pop = await data.queue.splice(ind - 1, 1)[0].info.title;
 
 		}
 
