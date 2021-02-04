@@ -124,7 +124,7 @@ class MusicHandler {
 			// { host: "Lavalink-Node-1.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" },
 			{ host: "sql.dazai.app", port: 2333, region: "us", password: "dazaiAppTet$" },
 			// { host: "Lavalink-Node-3.icedplasma.repl.co", port: 80, region: "us", password: "dazaiAppTet$" }
-			
+
 		];
 
 		regions = {
@@ -146,7 +146,7 @@ class MusicHandler {
 		return data;
 		console.log(data.tracks[0]);
 	}
-	async resolveTrack(term){
+	async resolveTrack(term) {
 		let data = await resolveTracks(nodes[0], `${term}`).catch(er => console.error(er));
 		return data;
 		console.log(data);
@@ -177,7 +177,8 @@ class MusicHandler {
 			return "Empty playlist!";
 		await this.queueSong(msg, tracks.shift());
 		let data = guildData.get(msg.guildID);
-		data.queue = data.queue.concat(tracks.map(x=>{
+		data.queue = data.queue.concat(tracks.map(x => {
+			musicCache.set(x.track,x);
 			return {
 				track: x,
 				msg: msg,
@@ -186,15 +187,15 @@ class MusicHandler {
 		guildData.set(msg.guildID, data);
 		return `Queued ${tracks.length + 1} tracks!`;
 	}
-	async getQueue(guildid){
+	async getQueue(guildid) {
 		let gobj = guildData.get(guildid);
 		if (!gobj || gobj.queue.length == 0)
 			return [];
-		return gobj.queue.map((x,ind)=>{
+		return gobj.queue.map((x, ind) => {
 			return {
-				name: ` ${ind+1} | ${x.track.info.title}`,
-				value: `${SecsToFormat(Math.round(x.track.info.length/1000))} | Requested by: ${x.msg.member.nick || x.msg.author.username}#${x.msg.author.discriminator} [[Link]](${x.track.info.uri})`,
-				inline:false
+				name: ` ${ind + 1} | ${x.track.info.title}`,
+				value: `${SecsToFormat(Math.round(x.track.info.length / 1000))} | Requested by: ${x.msg.member.nick || x.msg.author.username}#${x.msg.author.discriminator} [[Link]](${x.track.info.uri})`,
+				inline: false
 			};
 		});
 	}
@@ -219,25 +220,25 @@ class MusicHandler {
 		}
 		return data.skips.length + " out of " + map.length + " would like to skip. " + Math.ceil((map.length + 1) / 2) + " must agree to skip to skip!\n*Tip: Trying to Force-Skip a song? try `fs` instead!*";
 	}
-	async skipSong(guildID){
+	async skipSong(guildID) {
 		let gobj = guildData.get(guildID);
-		if (!gobj){
+		if (!gobj) {
 			return null;
 		}
 		gobj.connection.stop();
 	}
-	toggleLoop(guildid){
+	toggleLoop(guildid) {
 		let gobj = guildData.get(guildid);
-		if (!gobj){
+		if (!gobj) {
 			return null;
 		}
 		gobj.loop = !gobj.loop;
-		guildData.set(guildid,gobj);
+		guildData.set(guildid, gobj);
 		return gobj.loop;
 	}
-	async stop(guildid){
+	async stop(guildid) {
 		let gobj = guildData.get(guildid);
-		if (!gobj){
+		if (!gobj) {
 			return null;
 		}
 		gobj.connection.stop();
@@ -245,31 +246,31 @@ class MusicHandler {
 		guildData.delete(guildid);
 		return true;
 	}
-	async pause(guildid){
+	async pause(guildid) {
 		let gobj = guildData.get(guildid);
-		if (!gobj){
+		if (!gobj) {
 			return 0;
 		}
-		if (gobj.connection.paused){
+		if (gobj.connection.paused) {
 			return 1;
 		}
 		gobj.connection.setPause(true);
 		return 2;
 	}
-	async resume(guildid){
+	async resume(guildid) {
 		let gobj = guildData.get(guildid);
-		if (!gobj){
+		if (!gobj) {
 			return 0;
 		}
-		if (!gobj.connection.paused){
+		if (!gobj.connection.paused) {
 			return 1;
 		}
-		gobj.connection.setPause(false); 
+		gobj.connection.setPause(false);
 		return 2;
 	}
-	async getCurrentSong(guildid){
+	async getCurrentSong(guildid) {
 		let gobj = guildData.get(guildid);
-		if (!gobj || !gobj.nowPlaying){
+		if (!gobj || !gobj.nowPlaying) {
 			return null;
 		}
 		// let retobj = 
@@ -298,8 +299,8 @@ class MusicHandler {
 				connection: await getPlayer(channel),
 				queue: [],
 				skips: [],
-				loop:false,
-				
+				loop: false,
+
 			};
 			guildData.set(msg.guildID, gobj);
 		}
@@ -313,9 +314,13 @@ class MusicHandler {
 			return `Added ${track.info.title} to the Queue`;
 		} else {
 			gobj.connection.play(track.track);
+			// console.log(Array.from(musicCache.keys()));
 			axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
 				auth: this.bot.token,
-				queue: await Promise.all(gobj.queue.map(async x => musicCache.get(x.track.track))
+				queue: await Promise.all(gobj.queue.map(x => {
+					// console.log(x.track.track, musicCache.get(x.track.track));
+					return musicCache.get(x.track.track);
+				})
 				),
 				song: track,
 				guild: msg.guildID,
@@ -330,10 +335,10 @@ class MusicHandler {
 			guildData.set(msg.guildID, gobj);
 			gobj.connection.once("end", async (reason) => {
 				if (reason.reason === "REPLACED")
-					return console.log("Ignoring",reason);
-				console.log("End Reason:",reason);
+					return console.log("Ignoring", reason);
+				console.log("End Reason:", reason);
 				let ndata = guildData.get(msg.guildID);
-				if (ndata.loop){
+				if (ndata.loop) {
 					delete ndata.nowPlaying.startedAt;
 					ndata.queue.push(ndata.nowPlaying);
 				}
@@ -349,7 +354,7 @@ class MusicHandler {
 					// 	await sleep(10);
 					// }
 					// await sleep(500);
-					await this.queueSong(song.msg, song.track).catch(er=>console.trace(er));
+					await this.queueSong(song.msg, song.track).catch(er => console.trace(er));
 					// console.log("queued song!");
 
 				} else {
