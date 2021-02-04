@@ -39,7 +39,7 @@ module.exports = new DiscordEvent({
 		try {
 			if (!msg.guildID || !(await bot.SQLHandler.getGuild(msg.guildID)).whoping)
 				return;
-			if ((msg.content.match(/who pinged/g) || msg.content.toLowerCase() === "who ping") && msg.content.length < 25) {
+			if ((msg.content.match(/who pinged/g) || msg.content.toLowerCase().includes("who ping")) && msg.content.length < 15) {
 				msg.channel.sendTyping();
 				let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
 				allMessages = allMessages.filter(x => x.mentions.includes(msg.author));
@@ -49,7 +49,7 @@ module.exports = new DiscordEvent({
 						return {
 							title: "Pings from the last 400 messages :) ",
 							description: group.map((x, ind) =>
-								`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id}) sent ${moment(x.timestamp).fromNow()} `).join("\n")
+								`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id}) from ${moment(x.timestamp).fromNow()} `).join("\n")
 						};
 					});
 					await msg.channel.createMessage({
