@@ -10,7 +10,7 @@ module.exports = new GuildCommand({
 		if (params[0].toLowerCase() === "all"){
 			client.createMessage(msg.channel.id,"Removed all items from queue.");
 		}else{
-			msg.channel.createMessage("Removed `"+resp.title+ "` from the queue");
+			msg.channel.createMessage("Removed `"+resp+ "` from the queue");
 		}
 	}),
 	options:{
