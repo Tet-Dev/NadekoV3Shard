@@ -10,6 +10,7 @@ let uwuSpeakCache = new Map();
 // async function checkIfValid(){
 
 // }
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
@@ -31,6 +32,8 @@ const httpRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/
 module.exports = new DiscordEvent({
 	name: "messageCreate",
 	run: async (bot, msg) => {
+		if (!bot.cooldownMaps)
+			bot.cooldownMaps = cooldownMaps;
 		if (!msg.guildID || msg.author.bot) return true;
 		if (cooldownMaps.has(msg.author.id) && cooldownMaps.get(msg.author.id) > Date.now()/1000) return;
 		cooldownMaps.set(msg.author.id,(Date.now()/1000)+60);
@@ -52,7 +55,11 @@ module.exports = new DiscordEvent({
 				//Inject vars
 				let lmsg = guild.levelmsgs || "Congrats 🎉 {MENTION}, You levelled up from {OLDLVL} to {NEWLVL}.";
 				lmsg = lmsg.replace(/{MENTION}/g, msg.author.mention).replace(/{OLDLVL}/g, (res-1)).replace(/{NEWLVL}/g, (res) + "").replace(/{USERNAME}/g, msg.author.username).replace(/{ID}/g, msg.author.id);
-				await bot.createMessage(guild.levelmsgchan && guild.levelmsgchan !== "none"? guild.levelmsgchan:msg.channel.id,lmsg);
+				while (cooldownMaps.get(msg.author.id)+60 < (Date.now()/1000)){
+					await sleep(60000);
+				}
+				let dmchan = await bot.getDMChannel(msg.author.id);
+				await bot.createMessage(guild.levelmsgchan && guild.levelmsgchan !== "none"? guild.levelmsgchan:dmchan.id,lmsg);
 				let parseLvl = parseLevelRewards(guild.levelrewards);
 				let awards = parseLvl.filter(x=>x.level == res).map(x=>x.roleID);
 				let dmChannel = await bot.getDMChannel(msg.author.id);
