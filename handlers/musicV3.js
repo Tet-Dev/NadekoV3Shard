@@ -294,7 +294,7 @@ class MusicHandler {
 			data.queue = [];
 
 		} else {
-			pop = await data.queue.splice(ind - 1, 1)[0].info.title;
+			pop = await data.queue.splice(ind - 1, 1)[0].track.info.title;
 
 		}
 
