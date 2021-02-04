@@ -53,7 +53,7 @@ async function generateCardData(level, xp, next, currentFormatted, nextFormatted
 	pfp = await pfp.buffer();
 	pfp = await Image.decode(pfp);
 	if (pfp.height <256) pfp.resize(256,256);
-	pfp = pfp.cropCircle(false,1);
+	pfp = pfp.cropCircle(false,0.2);
 	base.composite(pfp, 40, Math.round(base.height / 2) - Math.round(pfp.height / 2));
 	let rankLvl = await Image.renderText(fontMap.get("baloo"), 35, `Rank ${rank}`, Jimp.rgbaToInt(255, 255, 255, 255));
 	let lvl = await Image.renderText(fontMap.get("baloo"), 80, `Level ${level}`, Jimp.rgbaToInt(255, 255, 255, 255));
@@ -65,7 +65,7 @@ async function generateCardData(level, xp, next, currentFormatted, nextFormatted
 	base.composite(lvl, (pfp.width + 50), 80);
 	base.composite(text, (pfp.width + 50), 150);
 	xp = xp || next*0.0009765625;
-	if (xp > next)
+	if (xp/next > 1)
 		xp = next;
 	let xpBar = new Image(1024*(xp/next),30);
 	let color = Image.colorToRGBA(pfp.averageColor());
