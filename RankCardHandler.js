@@ -53,7 +53,7 @@ async function generateCardData(level, xp, next, currentFormatted, nextFormatted
 	pfp = await pfp.buffer();
 	pfp = await Image.decode(pfp);
 	if (pfp.height <256) pfp.resize(256,256);
-	pfp = pfp.cropCircle(false,0.2);
+	pfp = pfp.cropCircle(false,0.05);
 	base.composite(pfp, 40, Math.round(base.height / 2) - Math.round(pfp.height / 2));
 	let rankLvl = await Image.renderText(fontMap.get("baloo"), 35, `Rank ${rank}`, Jimp.rgbaToInt(255, 255, 255, 255));
 	let lvl = await Image.renderText(fontMap.get("baloo"), 80, `Level ${level}`, Jimp.rgbaToInt(255, 255, 255, 255));
