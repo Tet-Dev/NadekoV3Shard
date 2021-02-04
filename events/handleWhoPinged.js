@@ -66,7 +66,7 @@ module.exports = new DiscordEvent({
 				});
 			} else {
 				await msg.channel.createMessage({
-					content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. It was either over 400 messages ago or it was deleted.`});
+					content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. Could it have been deleted?`});
 			}
 			await msg.channel.createMessage("*If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix*");
 		}
