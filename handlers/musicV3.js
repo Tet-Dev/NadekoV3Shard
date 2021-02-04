@@ -210,7 +210,7 @@ class MusicHandler {
 		if (!map.includes(userID)) return "You must be in the channel to VoteSkip";
 		data.skips = data.skips.filter(x => map.includes(x) && x !== userID);
 		data.skips.push(userID);
-		this.handler.set(guildID, data);
+		guildData.set(guildID, data);
 		if (data.skips.length > (map.length + 1) / 2 || map.length == 1) {
 			setTimeout(() => {
 				this.skipSong(guildID);
@@ -279,6 +279,27 @@ class MusicHandler {
 			requestedBy: gobj.nowPlaying.msg.member,
 			timeStarted: gobj.nowPlaying.startedAt,
 		};
+	}
+	async shufflePlaylist(guildID) {
+		let q = guildData.get(guildID);
+		if (!q) return false;
+		q.queue = shuffle(q.queue);
+		guildData.set(guildID, q);
+		return true;
+	}
+	async removeQueue(guildID, ind) {
+		let data = guildData.get(guildID);
+		let pop;
+		if (ind.toLowerCase() === "all") {
+			data.queue = [];
+
+		} else {
+			pop = await this.checkCacheFor(data.queue.splice(ind - 1, 1)[0].song).catch(er => { });
+
+		}
+
+		guildData.set(guildID, data);
+		return pop;
 	}
 	async queueSong(msg, track, member) {
 		if (!msg.guildID) {
