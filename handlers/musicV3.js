@@ -202,7 +202,7 @@ class MusicHandler {
 		let failed = false;
 		let data = guildData.get(guildID);
 		if (!data) return "Nothing Playing???";
-		let chans = this.bot.getChannel(data.connection.channelID);
+		let chans = this.bot.getChannel(data.connection.channelId);
 		if (failed) return "Could not fetch Channel!";
 		let mems = chans.voiceMembers.filter(x => !x.bot);
 		let map = mems.map(x => x.id);
@@ -315,7 +315,7 @@ class MusicHandler {
 			gobj.connection.play(track.track);
 			axios.post("https://api.dazai.app/api/generateStartPlayMusicCard", {
 				auth: this.bot.token,
-				queue: await Promise.all(gobj.queue.map(async x => musicCache.get(x.track))
+				queue: await Promise.all(gobj.queue.map(async x => musicCache.get(x.track.track))
 				),
 				song: track,
 				guild: msg.guildID,
