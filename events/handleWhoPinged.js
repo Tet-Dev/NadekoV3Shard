@@ -58,7 +58,7 @@ module.exports = new DiscordEvent({
 						description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
 						author: {
 							name: `${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
-							url: allMessages[0].author.dynamicAvatarURL("png", 128),
+							icon_url: allMessages[0].author.dynamicAvatarURL("png", 128),
 						},
 						// url: ``,
 					},
@@ -68,7 +68,7 @@ module.exports = new DiscordEvent({
 				await msg.channel.createMessage({
 					content: `I dont know who pinged you ${msg.author.username}#${msg.author.discriminator}. It was either over 400 messages ago or it was deleted.`});
 			}
-			await msg.channel.createMessage("If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix");
+			await msg.channel.createMessage("*If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix*");
 		}
 		lastMsgMaps.set(msg.author.id, msg.id);
 
