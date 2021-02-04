@@ -4,6 +4,7 @@ const axios = require("axios");
 const fs = require("fs");
 const { all } = require("mathjs");
 const { url } = require("inspector");
+const moment = require("moment");
 const EmbedPaginator = require("eris-pagination");
 // const { boltzmannDependencies } = require("mathjs");
 // const { nuclearMagnetonDependencies } = require("mathjs");
@@ -48,7 +49,7 @@ module.exports = new DiscordEvent({
 						return {
 							title: "Pings from the last 400 messages :) ",
 							description: group.map((x, ind) =>
-								`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`).join("\n")
+								`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id}) sent ${moment(x.timestamp).fromNow()} `).join("\n")
 						};
 					});
 					await msg.channel.createMessage({
@@ -64,7 +65,14 @@ module.exports = new DiscordEvent({
 						},
 						// message_reference: msg.id
 					}); 
-					const paginatedEmbed = await EmbedPaginator.createPaginationEmbed(msg, pagi);
+					if (pagi.length== 1){
+						msg.channel.createMessage({
+							embed: pagi[0]
+						});
+					}else{
+						const paginatedEmbed = await EmbedPaginator.createPaginationEmbed(msg, pagi);
+					}
+					
 					
 				} else if (allMessages.length == 1) {
 					await msg.channel.createMessage({
