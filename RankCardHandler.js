@@ -53,7 +53,7 @@ async function generateCardData(level, xp, next, currentFormatted, nextFormatted
 	pfp = await pfp.buffer();
 	pfp = await Image.decode(pfp);
 	if (pfp.height <256) pfp.resize(256,256);
-	pfp = pfp.cropCircle();
+	pfp = pfp.cropCircle(false,1);
 	base.composite(pfp, 40, Math.round(base.height / 2) - Math.round(pfp.height / 2));
 	let rankLvl = await Image.renderText(fontMap.get("baloo"), 35, `Rank ${rank}`, Jimp.rgbaToInt(255, 255, 255, 255));
 	let lvl = await Image.renderText(fontMap.get("baloo"), 80, `Level ${level}`, Jimp.rgbaToInt(255, 255, 255, 255));
@@ -97,30 +97,34 @@ async function generateGIFCard(level, xp, next, currentFormatted, nextFormatted,
 		while (queue.length == 0) {
 			await sleep(10);
 		}
-
-		let item = queue.shift();
-		let args = item.split(" ");
-		
-		let path;
-		let name = [];
-		for (let i= 11; i < args.length;i++){
-			if (args[i] === "png" || args[i]=== "gif") {
-				args[11] = name.join(" ");
-				break;
+		try {
+			let item = queue.shift();
+			let args = item.split(" ");
+			
+			let path;
+			let name = [];
+			for (let i= 11; i < args.length;i++){
+				if (args[i] === "png" || args[i]=== "gif") {
+					args[11] = name.join(" ");
+					break;
+				}
+				// args.splice()
+				name.push(args[i]);
+				args[i]=null;
 			}
-			// args.splice()
-			name.push(args[i]);
-			args[i]=null;
+			args = args.filter(x=>x !== null);
+			if (args[12] === "png") {
+				// console.time("CreateCard");
+				path = await generateCardData(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]).catch(er=>console.trace(er));
+				// console.timeEnd("CreateCard");
+			} else {
+				path = await generateGIFCard(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
+			}
+			process.send({ key: args[13], path: path });
+		} catch (error) {
+			console.trace(error);
 		}
-		args = args.filter(x=>x !== null);
-		if (args[12] === "png") {
-			// console.time("CreateCard");
-			path = await generateCardData(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]).catch(er=>console.trace(er));
-			// console.timeEnd("CreateCard");
-		} else {
-			path = await generateGIFCard(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
-		}
-		process.send({ key: args[13], path: path });
+
 		// abc.substring(1,abc.length-1)
 		//Parse args
 
