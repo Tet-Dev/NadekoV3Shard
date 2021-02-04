@@ -44,7 +44,7 @@ module.exports = new DiscordEvent({
 				await msg.channel.createMessage({
 					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found ${allMessages.length} pings from your last message!`,
 					embed: {
-						title: "Pings",
+						title: "Pings from the last 400 messages :) ",
 						description: allMessages.map((x, ind) =>
 							`Ping from ${x.author.username}#${x.author.discriminator} [[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${x.id})`).join("\n")
 					},
@@ -52,7 +52,7 @@ module.exports = new DiscordEvent({
 				});
 			} else if (allMessages.length == 1) {
 				await msg.channel.createMessage({
-					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found 1 Ping from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
+					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found 1 Ping from the last 400 messages from ${allMessages[0].author.username}#${allMessages[0].author.discriminator}`,
 					embed: {
 						// title: "Click me to Jump",
 						description: allMessages[0].content + `[[Jump]](https://discord.com/channels/${msg.guildID}/${msg.channel.id}/${allMessages[0].id})`,
@@ -70,7 +70,7 @@ module.exports = new DiscordEvent({
 			}
 			await msg.channel.createMessage("*If you wish to turn off this feature, do `daz settings whoping off` or replace daz with your server prefix*");
 		}
-		lastMsgMaps.set(msg.author.id, msg.id);
+		// lastMsgMaps.set(msg.author.id, msg.id);
 
 	}
 });
