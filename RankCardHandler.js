@@ -65,6 +65,8 @@ async function generateCardData(level, xp, next, currentFormatted, nextFormatted
 	base.composite(lvl, (pfp.width + 50), 80);
 	base.composite(text, (pfp.width + 50), 150);
 	xp = xp || next*0.0009765625;
+	if (xp > next)
+		xp = next;
 	let xpBar = new Image(1024*(xp/next),30);
 	let color = Image.colorToRGBA(pfp.averageColor());
 	color[3] = 100;
