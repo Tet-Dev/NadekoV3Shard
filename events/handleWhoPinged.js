@@ -40,6 +40,7 @@ module.exports = new DiscordEvent({
 			msg.channel.sendTyping();
 			let allMessages = await msg.channel.getMessages(400, msg.id, lastMsgMaps.get(msg.author.id));
 			allMessages = allMessages.filter(x=>x.mentions.includes(msg.author));
+			allMessages.length = 25;
 			if (allMessages.length > 1) {
 				await msg.channel.createMessage({
 					content: `Hey ${msg.author.username}#${msg.author.discriminator}, I found ${allMessages.length} pings from your last message!`,
