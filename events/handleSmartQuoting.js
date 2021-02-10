@@ -127,12 +127,12 @@ module.exports = new DiscordEvent({
 		}));
 
 		linkedmsgs = linkedmsgs.filter(x => x).concat(extraembeds);
-		linkedmsgs.push({
-			"color": null,
-			"footer": {
-				"text": "This message was modified from an original user message by Dazai."
-			}
-		});
+		// linkedmsgs.push({
+		// 	"color": null,
+		// 	"footer": {
+		// 		"text": "This message was modified from an original user message by Dazai."
+		// 	}
+		// });
 		let tempmsg = {
 			content: msg.content.replace(/[<|@|!|>]/g, ""),
 			embeds: linkedmsgs,
