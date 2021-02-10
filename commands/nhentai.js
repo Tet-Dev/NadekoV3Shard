@@ -16,10 +16,11 @@ module.exports = new Command({
 		}
 		if (!msg.channel.nsfw && msg.member) return "You need to perform this command either in a dm or in a NSFW Text Channel!";
 		let sauce;
-		if (params[0].toLowerCase() === "random") {
+		if (!params[0] || params[0].toLowerCase() === "random") {
 			let res = await axios.get("https://nhentai.net/random/");
-			sauce = res.data.split("<meta itemprop=\"image\" content=\"https://t.nhentai.net/galleries/")[1].split("/")[0];
-
+			// console.log("Data: ",res.data);
+			sauce = res.data.match(/<span class="hash">#<\/span>\d+<\/h3>/)[0].match(/\d+/)[0];
+			// console.log(sauce);
 		} else {
 			sauce = params[0];
 		}
