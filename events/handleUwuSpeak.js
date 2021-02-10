@@ -149,7 +149,7 @@ module.exports = new DiscordEvent({
 			const links = msg.content.match(httpRegex);
 			if (links) msg.content = msg.content.replace(httpRegex, "{蟹$§$蟹}");
 			// eslint-disable-next-line no-control-regex
-			msg.content.replace(/[^\x00-\x7F]+/g, "");
+			msg.content = msg.content.replace(/[^\x00-\x7F]+/g, "");
 			msg.content = msg.content.replace(/l/g, "w");
 			msg.content = msg.content.replace(/r/g, "w");
 			msg.content = msg.content.replace(/(?:r|l)/g, "w");
