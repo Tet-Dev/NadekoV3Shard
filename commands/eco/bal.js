@@ -1,7 +1,7 @@
-const { SettingCommand } = require("eris-boiler/lib");
+const { Command } = require("eris-boiler/lib");
 // const { owner: permission } = require('../../permissions')
 
-module.exports = new SettingCommand({
+module.exports = new Command({
 	name: "bal",
 	description: "Gets your balance or another user's bal",
 	options: {

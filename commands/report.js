@@ -20,10 +20,16 @@ module.exports = new GuildCommand({
 		let sendContext = false;
 		if (msg.author.bot) return;
 		let am = await msg.channel.createMessage("Sending Report...");
-		let firstArg = params.shift().toLowerCase();
-		if (firstArg !== "yes" && firstArg !== "no"){
-			return "The first Argument must be either yes or no!";
+		let firstArg;
+		if (params.length>0){
+			firstArg = params.shift().toLowerCase();
+			if (firstArg !== "yes" && firstArg !== "no"){
+				return "The first Argument must be either yes or no!";
+			}
+		}else{
+			firstArg = "yes"
 		}
+
 		if (params.length >= 1 && firstArg === "yes")
 			sendContext = await msg.channel.getMessages(9, msg.id);
 		let attachment = msg.attachments[0];

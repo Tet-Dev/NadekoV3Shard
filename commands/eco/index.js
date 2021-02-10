@@ -1,7 +1,8 @@
-const { GuildCommand } = require("eris-boiler/lib");
+const { Command } = require("eris-boiler/lib");
 const pay = require('./pay');
 const bal = require('./bal');
-module.exports = new GuildCommand({
+const daily = require("./daily");
+module.exports = new Command({
 	name: "eco", // name of command
 	description: "The Parent of all economy Commands",
 	options: {
@@ -9,6 +10,8 @@ module.exports = new GuildCommand({
 			// prefix,
 			pay,
 			bal,
+			daily,
+
 			// dj,
 			// extraRole,
 			// extraRole2,

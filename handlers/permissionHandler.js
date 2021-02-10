@@ -1,11 +1,11 @@
 let base = {
 	dj: ["skipSong", "forceDC","shuffle","pauseMusic","resumeMusic"],
-	mod: ["purgeMessages", "mute", "nickLock", "nickLockClear", "unmute", "uwuspeak", "warnUser", "removeWarn","export"],
+	mod: ["purgeMessages", "mute", "nickLock", "nickLockClear", "unmute", "uwuspeak", "warnUser", "removeWarn","export","viewWarns"],
 	extraRole: [],
 	extraRole2: [],
-	everyone: ["playSong", "viewWarns","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","flushify"]
+	everyone: ["playSong", "viewSelfWarns","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","flushify"]
 };
-let allPerms = ["skipSong","purgeMessages","mute","uwuspeak","disablecmd","nickLock","nickLockClear","reactionRoleCreate","reactionRoleRemove","warnUser","removeWarn","createRedditSub","clearRedditSub","unmute","viewWarns","forceDC","playSong","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","ripEmote","flushify","export","pauseMusic","resumeMusic","shuffle"];
+let allPerms = ["skipSong","purgeMessages","mute","uwuspeak","disablecmd","nickLock","nickLockClear","reactionRoleCreate","reactionRoleRemove","warnUser","removeWarn","createRedditSub","clearRedditSub","unmute","viewSelfWarns","viewWarns","forceDC","playSong","pvc","nhentai","urban","lewd","notlewd","loop","viewCurve","snipe","ripEmote","flushify","export","pauseMusic","resumeMusic","shuffle"];
 let bot;
 class PermissionsHandler {
 

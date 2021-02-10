@@ -1,8 +1,9 @@
 const axios = require("axios");
-const { Command } = require("eris-boiler/lib");
 const moment = require("moment");
 // const Danbooru = require('danbooru');
 const Booru = require('booru');
+const { meanBy } = require("lodash");
+const { GuildCommand } = require("eris-boiler");
 // const booru = new Danbooru();
 // const ytpl = require("ytpl");
 // const ytsr = require("ytsr");
@@ -16,48 +17,20 @@ function shuffleArray(arr) {
 }
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 //------------------------------------------------
-module.exports = new Command({
+module.exports = new GuildCommand({
 	name: "warn", // name of command
 	description: "Warns a user.",
 	run: (async (client, { msg, params }) => {
 
-		if (msg.member && !(await client.permissionsHandler.checkForPerm(msg.member, "notlewd"))) {
-			return "You lack the permission `notlewd`";
+		if (msg.member && !(await client.permissionsHandler.checkForPerm(msg.member, "warnUser"))) {
+			return "You lack the permission `warnUser`";
 		}
-		// if (!msg.channel.nsfw && msg.member) return "You need to perform this command either in a dm or in a NSFW Text Channel!";
-		// if (params > 2) {
-		// 	return "You can only search by a max of 2 tags";
-		// }
-		let sites = ["safebooru.org", "gelbooru.com", "yande.re","danbooru"];
-		let fallback = ["konachan.net"];
-		shuffleArray(sites);
-		let sindex = Math.floor(Math.random() * sites.length);
-		let posts = await Booru.search(sites[sindex], params, { limit: 500, random: true }).catch(er=>{console.trace(er);client.createMessage("```"+er+"```");});
-		if (!posts ) posts = await Booru.search(fallback[0], params, { limit: 500, random: true }).catch(er=>{console.trace(er);client.createMessage("```"+er+"```");});
-		posts = posts.filter(x=>x.rating === "s");
-		if (!posts || posts.length == 0) posts = await Booru.search(fallback[0], params, { limit: 500, random: true }).catch(er=>{console.trace(er);client.createMessage("```"+er+"```");});
-		if (!posts || posts.length == 0) return "No Images found";
-		posts = posts.filter(x=>x.rating === "s");
-		
-		// if (tempPosts.length == 0){
-		// 	client.createMessage("Could not find the Lewd Stuff, looking through SFW images also");
-		// }else{
-		// 	posts = tempPosts;
-		// }
-		
-		let post = posts[Math.floor(Math.random() * posts.length)];
-		return {
-			embed: {
-				url: post.postView,
-				description: `Posted at ${moment(post.createdAt.getTime()).fromNow()}`,
-				image: {
-					url: post.fileUrl
-				},
-				footer: {
-					text: "Tags : " + post.tags.join(", ")
-				}
-			}
-		};
+		let member = await client.getRESTGuildMember(msg.guildID,params.shift().match(/\d+/g)).catch(er=>{});
+		if (!member)
+			return `I cannot find that member!`;
+		let reason = params.join(" ");
+		client.PunishmentHandler.addPunishment(member.guild,member,"warn",null,reason || "Unspecified",msg.member);
+		return "Warned user!";
 	}),
 	options: {
 		// aliases: ["nh"]

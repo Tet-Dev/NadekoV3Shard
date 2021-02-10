@@ -21,7 +21,8 @@ module.exports = new GuildCommand({
 		// return "Command WIP";
 		let mention = msg.mentions[0];
 		if (!mention) return "No mentions??";
-		let newNick = params[1];
+		params.shift();
+		let newNick = params.join(" ");
 		if (!newNick) return "No New Nick?";
 		if (newNick === "$$clear" && !(await client.permissionsHandler.checkForPerm(msg.member, "nickLockClear"))) return "You are missing the permission `nickLockClear`";
 		let mem = await client.getRESTGuildMember(msg.guildID, mention.id).catch(er => { });
@@ -29,7 +30,7 @@ module.exports = new GuildCommand({
 		if (!mem.guild || !mem.guild.name) mem.guild = client.getRESTGuild(msg.guildID);
 		let allRoles = mem.guild.roles.filter(x => x).sort((a, b) => b.position - a.position);
 		let menRoles = allRoles.filter(x => mem.roles.includes(x.id));
-		let ClientMem = await client.getRESTGuildMember(msg.guildID, client.user.id);
+		let ClientMem = await client.guilds.get(msg.guildID).members.get(client.user.id);
 		let botRoles = allRoles.filter(x => ClientMem.roles.includes(x.id));
 		if (!botRoles.length) {
 			return "Hmm, I dont seem to have any roles! Make sure to give me the appropriate roles!";
@@ -37,7 +38,7 @@ module.exports = new GuildCommand({
 		// if (!ClientMem.permissions.has("manageNicknames")) return "I need the ability to change other people's nicknames!"
 		let highestBotRole = botRoles[0];
 		let highestMemRole = menRoles[0];
-		if (highestMemRole && highestMemRole.position >= highestBotRole) return `${mention.username} has a higher role than me! Please make sure I have a higher role!`
+		if (highestMemRole && highestMemRole.position >= highestBotRole) return `${mention.username} has a higher role than me! Please make sure I have a higher role!`;
 		let gData = await client.SQLHandler.getGuild(msg.guildID);
 
 		let nickedUsers = gData.lockedGuildMemberNames ? gData.lockedGuildMemberNames.split("$$clear$$clear") : [];

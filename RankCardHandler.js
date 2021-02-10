@@ -12,7 +12,7 @@ const imageScript = require("imagescript");
 const fetch = require('node-fetch');
 const { Image } = imageScript;
 
-const { start } = require("repl");
+// const { start } = require("repl");
 const { spawn } = require("child_process");
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));

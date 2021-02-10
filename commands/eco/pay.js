@@ -10,7 +10,7 @@ module.exports = new SettingCommand({
 	},
 	displayName: "Pay Command",
 	getValue: async (bot, { msg }) => {
-		return "Pay someone with `eco pay` (10% Tax Rounded Up) Min. 2 DC";
+		return "Pay someone with `eco pay` (15% Tax Rounded Up) Min. 2 DC";
 	},
 	run: async (bot, { msg, params }) => {
 		let p0 = params.shift().replace("<@","").replace("<@!","").replace(">","");

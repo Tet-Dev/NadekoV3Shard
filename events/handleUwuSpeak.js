@@ -90,7 +90,10 @@ module.exports = new DiscordEvent({
 				// hooks.push("https:\/\/discordapp.com/api/webhooks/" + webhookInfo.id + "/" + webhookInfo.token);
 			}
 		}
-
+		let reply = msg.messageReference && msg.messageReference.messageID;
+		if (msg.messageReference && msg.messageReference.messageID){
+			msg.content = `https://discord.com/${msg.messageReference.guildID}/${msg.messageReference.channelID}/${msg.messageReference.messageID}`;
+		}
 		let data = findLinks(msg.content);
 		let linkedmsgs;
 		let extraembeds = [];
@@ -112,6 +115,8 @@ module.exports = new DiscordEvent({
 						url: refm.attachments[0].url
 					};
 				}
+				if (reply)
+					msg.content += `||${refm.author.mention}||`;
 				return {
 					author: {
 						name: refm.author.username || "Unknown",
@@ -138,6 +143,8 @@ module.exports = new DiscordEvent({
 
 		const links = msg.content.match(httpRegex);
 		if (links) msg.content = msg.content.replace(httpRegex, "{蟹$§$蟹}");
+		// eslint-disable-next-line no-control-regex
+		msg.content.replace(/[^\x00-\x7F]+/g,"");
 		msg.content = msg.content.replace(/l/g, "w");
 		msg.content = msg.content.replace(/r/g, "w");
 		msg.content = msg.content.replace(/(?:r|l)/g, "w");
@@ -158,6 +165,8 @@ module.exports = new DiscordEvent({
 		msg.content = msg.content.split("î").join("NYI");
 		msg.content = msg.content.split("ø").join("NYO");
 		msg.content = msg.content.split("ü").join("NYU");
+		if (!msg.content) return;
+		
 		let Selhook = hooks[(msg.author.id % 10) % hooks.length];
 		if (links) {
 			for (let i = 0; i < links.length; i++) {
@@ -178,6 +187,7 @@ module.exports = new DiscordEvent({
 			avatarURL: msg && msg.author.avatarURL ? msg.author.avatarURL.replace(".jpg", ".png") : bot.user.avatarURL,
 			wait: true,
 		};
+		
 		let t2 = {
 			allowedMentions:{
 				everyone:false,
