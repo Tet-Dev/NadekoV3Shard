@@ -92,7 +92,7 @@ module.exports = new DiscordEvent({
 		}
 		let reply = msg.messageReference && msg.messageReference.messageID;
 		if (msg.messageReference && msg.messageReference.messageID){
-			msg.content = `https://discord.com/${msg.messageReference.guildID}/${msg.messageReference.channelID}/${msg.messageReference.messageID}`;
+			msg.content = `https://discord.com/${msg.messageReference.guildID}/${msg.messageReference.channelID}/${msg.messageReference.messageID}` + msg.content;
 		}
 		let data = findLinks(msg.content);
 		let linkedmsgs;
