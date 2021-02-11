@@ -92,6 +92,7 @@ module.exports = new DiscordEvent({
 					// hooks.push("https:\/\/discordapp.com/api/webhooks/" + webhookInfo.id + "/" + webhookInfo.token);
 				}
 			}
+			msg.delete();
 			let reply = msg.messageReference && msg.messageReference.messageID;
 			if (msg.messageReference && msg.messageReference.messageID) {
 				msg.content = `https://discord.com/channels/${msg.messageReference.guildID}/${msg.messageReference.channelID}/${msg.messageReference.messageID} ` + msg.content;
@@ -147,7 +148,7 @@ module.exports = new DiscordEvent({
 
 
 			const links = msg.content.match(httpRegex);
-			msg.delete();
+			
 			if (links) msg.content = msg.content.replace(httpRegex, "{蟹$§$蟹}");
 			// eslint-disable-next-line no-control-regex
 			msg.content = msg.content.replace(/[^\x00-\x7F]+/g, "");
