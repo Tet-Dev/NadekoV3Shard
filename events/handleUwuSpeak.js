@@ -147,6 +147,7 @@ module.exports = new DiscordEvent({
 
 
 			const links = msg.content.match(httpRegex);
+			msg.delete();
 			if (links) msg.content = msg.content.replace(httpRegex, "{蟹$§$蟹}");
 			// eslint-disable-next-line no-control-regex
 			msg.content = msg.content.replace(/[^\x00-\x7F]+/g, "");
@@ -170,6 +171,7 @@ module.exports = new DiscordEvent({
 			msg.content = msg.content.split("î").join("NYI");
 			msg.content = msg.content.split("ø").join("NYO");
 			msg.content = msg.content.split("ü").join("NYU");
+			
 			if (!msg.content) return;
 
 			let Selhook = hooks[(msg.author.id % 10) % hooks.length];
@@ -178,7 +180,7 @@ module.exports = new DiscordEvent({
 					msg.content = msg.content.replace("{蟹$§$蟹}", links[i]);
 				}
 			}
-			msg.delete();
+			
 			let tempitem = {
 				allowedMentions: {
 					everyone: false,
