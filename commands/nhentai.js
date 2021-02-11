@@ -9,7 +9,7 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 //------------------------------------------------
 module.exports = new Command({
 	name: "nhentai", // name of command
-	description: "Provides info about a doujin",
+	description: "(NSFW) Provides info about a doujin",
 	run: (async (client, { msg, params }) => {
 		if (msg.member && !(await client.permissionsHandler.checkForPerm(msg.member, "nhentai"))) {
 			return "You lack the permission `nhentai`";
