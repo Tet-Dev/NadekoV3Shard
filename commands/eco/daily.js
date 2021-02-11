@@ -23,7 +23,7 @@ module.exports = new Command({
 				ecoAdded = 20;
 			}else{
 				data.streak++;
-				ecoAdded = Math.max(Math.floor(20 + (data.streak-1)*2.5),100);
+				ecoAdded = Math.max(Math.floor(20 + ((data.streak-1)*2.5)),100);
 			}
 			let coinGive = await bot.EconomyHandler.addToBal(msg.author.id,ecoAdded,`Daily Coins Streak of ${data.streak}`);
 			if (!coinGive) return "An error occured giving the daily bonus";
