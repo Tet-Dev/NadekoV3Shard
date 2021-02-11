@@ -23,14 +23,14 @@ module.exports = new Command({
 				ecoAdded = 20;
 			}else{
 				data.streak++;
-				ecoAdded = Math.max(Math.floor(20 + ((data.streak-1)*2.5)),100);
+				ecoAdded = Math.min(Math.floor(20 + ((data.streak-1)*2.5)),100);
 			}
 			let coinGive = await bot.EconomyHandler.addToBal(msg.author.id,ecoAdded,`Daily Coins Streak of ${data.streak}`);
 			if (!coinGive) return "An error occured giving the daily bonus";
 			delete data.userid;
 			data.lastdaily = Date.now();
 			await bot.SQLHandler.genericUpdate("personaldata","userid",msg.author.id,data);
-			return `Daily Bonus claimed! You gained 20 ${ecoAdded-20 > 0? `+ ${ecoAdded-20} Streak bonus` : ""}DazCoin! Come back tomorrow to claim more and build up your streak!`;
+			return `Daily Bonus claimed! You gained 20 ${ecoAdded-20 > 0? `+ ${ecoAdded-20} Streak bonus ` : ""}DazCoin! Come back tomorrow to claim more and build up your streak!`;
 		} else{
 			return `You claimed your daily dazcoin bonus ${moment(parseInt(data.lastdaily)).fromNow()}, you are eligible to claim ${moment(parseInt(data.lastdaily) + 86400000).fromNow()}.`;
 		}
